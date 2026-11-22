@@ -100,6 +100,37 @@
   }
   a.back:active { background: #1d3126; }
   .small { font-size: 14px; color: #8fa89b; }
+  .ai-btns { display: grid; gap: 10px; margin-top: 14px; }
+  a.ai-btn {
+    display: block;
+    background: #123528;
+    border: 1px solid #2a4234;
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: #e8f0ec;
+    font-size: 17px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+  }
+  a.ai-btn:active { background: #1d3126; }
+  .copy-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    background: #123528;
+    border: 1px solid #2a4234;
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: #7ddba8;
+    font-size: 16px;
+    font-weight: 800;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .copy-btn:active { background: #1d3126; }
+  .copy-note { display: none; font-size: 14px; color: #7ddba8; }
+  a.guide-link { color: #7ddba8; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -110,8 +141,8 @@
   <h2>やることは3つ</h2>
   <div class="step3">
     <div class="s"><span class="n">1</span>画面を撮る</div>
-    <div class="s"><span class="n">2</span>AIのアプリで写真を見せる</div>
-    <div class="s"><span class="n">3</span>「これ、怪しくないですか？」と聞く</div>
+    <div class="s"><span class="n">2</span>質問文をコピーする</div>
+    <div class="s"><span class="n">3</span>AIを選んで開き、写真を付けて貼る</div>
   </div>
 
   <h2>画面の撮り方</h2>
@@ -127,8 +158,20 @@
 
   <h2>AIへの聞き方</h2>
   <div class="card">
-    <p>AIのアプリ（Muse や ChatGPT など）を開いて、写真を付けて、この文をそのまま送ってください。</p>
-    <div class="ask-box">このメール（画面）は怪しくないですか？ 本物か詐欺か、見てください。</div>
+    <p>まず、この質問文をコピーしてください。</p>
+    <div class="ask-box" id="askBox">このメール（画面）は怪しくないですか？ 本物か詐欺か、見てください。</div>
+    <button class="copy-btn" id="copyBtn" type="button">質問文をコピーする</button>
+    <p class="copy-note" id="copyNote">AIのアプリで貼り付けてください。</p>
+    <p style="margin-top:16px">次に、使いたいAIを選んで開き、写真を付けて、コピーした文を貼って送ってください。</p>
+    <div class="ai-btns">
+      <a class="ai-btn" href="https://muse.ai" target="_blank" rel="noopener">七味（Muse）を開く</a>
+      <a class="ai-btn" href="https://claude.ai" target="_blank" rel="noopener">Claudeを開く</a>
+      <a class="ai-btn" href="https://chatgpt.com" target="_blank" rel="noopener">ChatGPTを開く</a>
+      <a class="ai-btn" href="https://gemini.google.com" target="_blank" rel="noopener">Geminiを開く</a>
+      <a class="ai-btn" href="https://copilot.microsoft.com" target="_blank" rel="noopener">Copilotを開く</a>
+    </div>
+    <p class="small" style="margin-top:12px">アプリが入っていればアプリが開きます。入っていなければウェブ版が開きます。</p>
+    <p style="margin-top:8px"><a class="guide-link" href="https://muse.ai/s/tomodian-jian-iphoneban-nogoan-nei-vw6xizklaexhxl/MZCfK72Hfj2vDcU5K5a1OChYa38ebUK2ge2ZELOTBiM">七味を入れてみたい方はこちら（iPhone版のご案内）</a></p>
   </div>
 
   <div class="warn">
@@ -144,5 +187,49 @@
 
   <a class="back" href="../">家の安全チェックに戻る</a>
 </div>
+<script>
+(function () {
+  var btn = document.getElementById('copyBtn');
+  var note = document.getElementById('copyNote');
+  var box = document.getElementById('askBox');
+  if (!btn || !box) return;
+  var TEXT = box.textContent;
+  var original = btn.textContent;
+  var timer = null;
+  function done() {
+    btn.textContent = 'コピーしました';
+    note.style.display = 'block';
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(function () { btn.textContent = original; }, 2500);
+  }
+  function selectBox() {
+    var range = document.createRange();
+    range.selectNodeContents(box);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  function fallback() {
+    var ta = document.createElement('textarea');
+    ta.value = TEXT;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    if (ok) { done(); } else { selectBox(); }
+  }
+  btn.addEventListener('click', function () {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(TEXT).then(done, fallback);
+    } else {
+      fallback();
+    }
+  });
+})();
+</script>
 </body>
 </html>
