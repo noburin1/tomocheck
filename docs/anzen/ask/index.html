@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>撮ってAIに聞く</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d1512">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1512;
+    color: #e8f0ec;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.7;
+    padding: 24px 16px 40px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 {
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.45;
+    margin-bottom: 12px;
+  }
+  .lead {
+    font-size: 17px;
+    color: #d7e5dc;
+    margin-bottom: 24px;
+  }
+  h2 {
+    font-size: 21px;
+    font-weight: 800;
+    margin: 30px 0 12px;
+  }
+  .card {
+    background: #16241d;
+    border: 1px solid #2a4234;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card p { font-size: 16px; color: #d7e5dc; }
+  .card p + p { margin-top: 8px; }
+  .step3 { display: grid; gap: 12px; margin-bottom: 8px; }
+  .step3 .s {
+    display: flex; align-items: center; gap: 14px;
+    background: #16241d; border: 1px solid #2a4234; border-radius: 14px;
+    padding: 16px 18px; font-size: 17px; font-weight: 700;
+  }
+  .step3 .n {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    background: #123528; color: #7ddba8; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .ask-box {
+    background: #0a0f0c;
+    border: 1px dashed #4a6b58;
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 17px;
+    color: #e8f0ec;
+    margin-top: 10px;
+  }
+  .warn {
+    background: #33151a;
+    border: 1px solid #7a2e38;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .warn .w-title { font-size: 18px; font-weight: 800; color: #ff9aa5; margin-bottom: 8px; }
+  .warn p { font-size: 16px; color: #f3d9dc; }
+  .warn p + p { margin-top: 8px; }
+  a.biglink {
+    display: block;
+    text-decoration: none;
+    color: #e8f0ec;
+    background: #16241d;
+    border: 1px solid #2a4234;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  a.biglink:active { background: #1d3126; }
+  a.biglink .t { font-size: 19px; font-weight: 800; margin-bottom: 4px; }
+  a.biglink .d { font-size: 15px; color: #b9cdc2; }
+  a.back {
+    display: inline-block;
+    margin-top: 14px;
+    color: #7ddba8;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  .small { font-size: 14px; color: #8fa89b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>あやしいメールや画面が来たら、まず撮る。</h1>
+  <p class="lead">慌ててリンクを押したり、電話したりしないでください。まず画面を写真に撮って、AIに見てもらうのが安全です。</p>
+
+  <h2>やることは3つ</h2>
+  <div class="step3">
+    <div class="s"><span class="n">1</span>画面を撮る</div>
+    <div class="s"><span class="n">2</span>AIのアプリで写真を見せる</div>
+    <div class="s"><span class="n">3</span>「これ、怪しくないですか？」と聞く</div>
+  </div>
+
+  <h2>画面の撮り方</h2>
+  <div class="card">
+    <p><b>iPhoneの撮り方</b></p>
+    <p>サイドボタンと音量を上げるボタンを、同時に押します（ホームボタンがある機種は、ホームボタンとサイドボタンを同時に押します）。撮れた写真は「写真」アプリに入ります。</p>
+  </div>
+  <div class="card">
+    <p><b>アンドロイドの撮り方</b></p>
+    <p>電源ボタンと音量を下げるボタンを、同時に押します。撮れた写真は「フォト」アプリに入ります。</p>
+    <p class="small">※機種によって違う場合があります。</p>
+  </div>
+
+  <h2>AIへの聞き方</h2>
+  <div class="card">
+    <p>AIのアプリ（Muse や ChatGPT など）を開いて、写真を付けて、この文をそのまま送ってください。</p>
+    <div class="ask-box">このメール（画面）は怪しくないですか？ 本物か詐欺か、見てください。</div>
+  </div>
+
+  <div class="warn">
+    <div class="w-title">送る前に、気をつけること</div>
+    <p>写真に名前・住所・電話番号などが写っていたら、その部分は送らないでください。</p>
+    <p>AIの答えは目安です。リンクを押さない・返信しない・書かれた番号に電話しない——これは守ってください。</p>
+  </div>
+
+  <a class="biglink" href="https://muse.ai/s/ayasiihua-mian-tietuka-th6xcxfpaxqxwoxd/qhLF2S0P-KOawLcmHUv3QnOeHPfpHydYTUbzQ5Co7E8">
+    <div class="t">あやしい画面チェッカー ›</div>
+    <div class="d">AIのアプリが無い方は、こちらのチェックページでも見分けられます</div>
+  </a>
+
+  <a class="back" href="../">‹ 安全チェックの入口に戻る</a>
+</div>
+</body>
+</html>
