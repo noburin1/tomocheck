@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>更新のチェック</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d1512">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1512;
+    color: #e8f0ec;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.7;
+    padding: 24px 16px 40px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 {
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.45;
+    margin-bottom: 12px;
+  }
+  .lead {
+    font-size: 17px;
+    color: #d7e5dc;
+    margin-bottom: 24px;
+  }
+  h2 {
+    font-size: 21px;
+    font-weight: 800;
+    margin: 30px 0 12px;
+  }
+  .card {
+    background: #16241d;
+    border: 1px solid #2a4234;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card p { font-size: 16px; color: #d7e5dc; }
+  .card p + p { margin-top: 8px; }
+  .step3 { display: grid; gap: 12px; margin-bottom: 8px; }
+  .step3 .s {
+    display: flex; align-items: center; gap: 14px;
+    background: #16241d; border: 1px solid #2a4234; border-radius: 14px;
+    padding: 16px 18px; font-size: 17px; font-weight: 700;
+  }
+  .step3 .n {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    background: #123528; color: #7ddba8; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .warn {
+    background: #33151a;
+    border: 1px solid #7a2e38;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .warn .w-title { font-size: 18px; font-weight: 800; color: #ff9aa5; margin-bottom: 8px; }
+  .warn p { font-size: 16px; color: #f3d9dc; }
+  .warn p + p { margin-top: 8px; }
+  a.biglink {
+    display: block;
+    text-decoration: none;
+    color: #e8f0ec;
+    background: #16241d;
+    border: 1px solid #2a4234;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  a.biglink:active { background: #1d3126; }
+  a.biglink .t { font-size: 19px; font-weight: 800; margin-bottom: 4px; }
+  a.biglink .d { font-size: 15px; color: #b9cdc2; }
+  a.back {
+    display: block;
+    margin-top: 20px;
+    background: #123528;
+    border: 1px solid #2a4234;
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: #7ddba8;
+    font-size: 17px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+  }
+  a.back:active { background: #1d3126; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ルーターの更新、<br>確かめていますか？</h1>
+  <p class="lead">ルーターの中にもプログラム（ファームウェア）が入っています。古いままだと、悪さをする人に使われる「穴」が残ることがあります。最新に保つのが、家を守る基本です。</p>
+
+  <h2>確かめ方は3つ</h2>
+  <div class="step3">
+    <div class="s"><span class="n">1</span><span>ルーターの設定画面を開く</span></div>
+    <div class="s"><span class="n">2</span><span>「ファームウェア更新」の場所で、今の版と「更新を確認」を見る</span></div>
+    <div class="s"><span class="n">3</span><span>新しい版があれば更新する。自動更新の設定があれば、ONにしておくと安心です</span></div>
+  </div>
+
+  <h2>設定画面の開き方が分からないときは</h2>
+  <a class="biglink" href="https://muse.ai/s/rutashe-ding-gaido-xvxh6xh49xo245x0/eeT9tXoNKZ4bCtY8g3rFyKoKl809pbbwp1-F-mdIp60">
+    <div class="t">ルーター設定ガイドを開く ›</div>
+    <div class="d">メーカーごとに、設定画面の開き方と更新の場所をまとめています。</div>
+  </a>
+
+  <div class="warn">
+    <div class="w-title">更新するときの注意</div>
+    <p>更新の途中では、ルーターの電源を切らないでください。</p>
+    <p>更新のあいだ、家のネットは一時的に止まります。</p>
+    <p>終わると自動で再起動することがあります。そのまま待てば大丈夫です。</p>
+  </div>
+
+  <a class="back" href="../">家の安全チェックに戻る</a>
+</div>
+</body>
+</html>
