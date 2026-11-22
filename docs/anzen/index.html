@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全チェック</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="安全チェック">
+<meta name="theme-color" content="#0d1512">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1512;
+    color: #e8f0ec;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.6;
+    padding: 24px 16px 40px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  .sub {
+    font-size: 16px;
+    color: #b9cdc2;
+    margin-bottom: 24px;
+  }
+  a.card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: #e8f0ec;
+    background: #16241d;
+    border: 1px solid #2a4234;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  a.card:active { background: #1d3126; }
+  a.card.emergency {
+    background: #33151a;
+    border: 1px solid #7a2e38;
+    display: block;
+  }
+  a.card.emergency:active { background: #421b21; }
+  .emergency .e-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ff9aa5;
+    margin-bottom: 6px;
+  }
+  .emergency .e-text { font-size: 16px; color: #f3d9dc; }
+  .icon {
+    flex: 0 0 auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+  }
+  .icon.wifi { background: #123528; }
+  .icon.checker { background: #3a1d22; }
+  .icon.router { background: #12333a; }
+  .card .body { flex: 1 1 auto; }
+  .card .c-title { font-size: 21px; font-weight: 800; margin-bottom: 4px; }
+  .card .c-text { font-size: 15px; color: #b9cdc2; }
+  .card .arrow { flex: 0 0 auto; font-size: 22px; color: #7fa08d; }
+  .footer {
+    margin-top: 28px;
+    font-size: 14px;
+    color: #8fa89b;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>家の安全、チェックは<br>ここから選ぶだけ。</h1>
+  <p class="sub">「元パソコン修理屋の本音」の安全ツールを、1つの入口にまとめました。全部、無料・登録なしです。</p>
+
+  <a class="card emergency" href="https://muse.ai/s/ayasiihua-mian-tietuka-th6xcxfpaxqxwoxd/qhLF2S0P-KOawLcmHUv3QnOeHPfpHydYTUbzQ5Co7E8">
+    <div class="e-title">⚠ いま変な警告画面が出ている人へ</div>
+    <div class="e-text">電話しない・ボタンを押さない。まずこちらで「詐欺かどうか」を確かめてください。 ›</div>
+  </a>
+
+  <a class="card" href="https://muse.ai/s/wi-fian-quan-tietuku-xlh6xd6oxgbrnxh/_9-NK3Zvettv807dh992CKlB01HGZIXe74ZPRwkJ3NE">
+    <div class="icon wifi">📶</div>
+    <div class="body">
+      <div class="c-title">Wi-Fi安全チェック</div>
+      <div class="c-text">今つないでいるWi-Fiの安全度を、その場で測ります</div>
+    </div>
+    <div class="arrow">›</div>
+  </a>
+
+  <a class="card" href="https://muse.ai/s/ayasiihua-mian-tietuka-th6xcxfpaxqxwoxd/qhLF2S0P-KOawLcmHUv3QnOeHPfpHydYTUbzQ5Co7E8">
+    <div class="icon checker">🔍</div>
+    <div class="body">
+      <div class="c-title">あやしい画面チェッカー</div>
+      <div class="c-text">「ウイルス感染」の警告や請求画面が本物か見分けます</div>
+    </div>
+    <div class="arrow">›</div>
+  </a>
+
+  <a class="card" href="https://muse.ai/s/rutashe-ding-gaido-xvxh6xh49xo245x0/eeT9tXoNKZ4bCtY8g3rFyKoKl809pbbwp1-F-mdIp60">
+    <div class="icon router">📡</div>
+    <div class="body">
+      <div class="c-title">ルーター設定ガイド</div>
+      <div class="c-text">メーカーを選ぶだけで、設定画面をボタンで開けます</div>
+    </div>
+    <div class="arrow">›</div>
+  </a>
+
+  <p class="footer">ボタンの追加・入れ替えは、このページ側でできます。置いたアイコンはそのままで大丈夫です。</p>
+</div>
+</body>
+</html>
