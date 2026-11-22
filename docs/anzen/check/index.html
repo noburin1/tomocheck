@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffffff">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>あやしい画面チェッカー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg2:#f2f7f2; --card:#ffffff; --card2:#f7faf7;
+  --ink:#1a2b1f; --ink2:#4a5d4f; --line:#dbe7dc;
+  --green:#177245; --green-dark:#0f5230; --green-soft:#e6f4ea;
+  --amber:#b45309; --amber-soft:#fef3c7; --amber-bg:#fffbeb;
+  --red:#b91c1c; --red-dark:#7f1d1d; --red-soft:#fee2e2; --red-bg:#fff1f2;
+  --blue:#1d4ed8; --blue-soft:#dbeafe;
+  --shadow:0 10px 30px rgba(20,60,35,.10);
+  --radius:20px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#101612; --bg2:#151d16; --card:#1a241c; --card2:#1f2a21;
+    --ink:#eef6ef; --ink2:#b9cbbc; --line:#33473a;
+    --green:#4ade80; --green-dark:#86efac; --green-soft:#173d27;
+    --amber:#fbbf24; --amber-soft:#453410; --amber-bg:#2a2110;
+    --red:#fca5a5; --red-dark:#fecaca; --red-soft:#4a1f1f; --red-bg:#2e1818;
+    --blue:#93c5fd; --blue-soft:#1e365e;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"M PLUS Rounded 1c","Noto Sans JP",system-ui,sans-serif;line-height:1.75;font-size:17px}
+a{color:var(--green)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 18px 56px}
+.hero{padding:28px 0 8px}
+.hero-label{display:inline-flex;align-items:center;gap:8px;background:var(--green-soft);color:var(--green-dark);font-weight:800;font-size:14px;padding:7px 12px;border-radius:999px;border:1px solid var(--line)}
+.hero h1{font-size:clamp(32px,6vw,52px);line-height:1.15;margin:16px 0 12px;font-weight:900;letter-spacing:.01em}
+.hero h1 em{font-style:normal;color:var(--red);background:linear-gradient(transparent 62%, var(--red-soft) 62%)}
+.hero p.lead{font-size:clamp(17px,2.6vw,20px);color:var(--ink2);margin:0;max-width:720px;font-weight:500}
+.emergency{margin:22px 0 0;background:var(--red-bg);border:2px solid #fca5a5;border-color:var(--red);border-radius:var(--radius);padding:20px}
+@media(prefers-color-scheme:dark){.emergency{border-color:#7f1d1d}}
+.emergency h2{margin:0 0 6px;font-size:22px;color:var(--red);display:flex;gap:10px;align-items:center}
+.emergency p{margin:0 0 14px;font-weight:700}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.step3{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--line)}
+.step3 b.num{display:inline-flex;width:36px;height:36px;border-radius:50%;background:var(--red);color:#fff;align-items:center;justify-content:center;font-size:18px;margin-bottom:6px}
+.step3 strong{display:block;font-size:17px;line-height:1.4}
+.step3 span{font-size:14px;color:var(--ink2);line-height:1.5;display:block;margin-top:4px}
+.toolnav{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:22px 0 6px}
+.toolnav a{text-decoration:none;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:var(--radius);padding:18px;display:block;box-shadow:var(--shadow)}
+.toolnav a:hover{border-color:var(--green)}
+.toolnav .ic{font-size:30px;line-height:1}
+.toolnav strong{display:block;font-size:20px;margin:8px 0 4px}
+.toolnav span{color:var(--ink2);font-size:15px;line-height:1.6;display:block}
+section{padding:34px 0 6px}
+.sec-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:8px}
+.sec-num{flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
+.sec-head h2{margin:0;font-size:clamp(24px,4vw,32px);line-height:1.25}
+.sec-head p{margin:4px 0 0;color:var(--ink2);font-weight:500}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin:16px 0}
+.card h3{margin:0 0 10px;font-size:20px}
+.q-label{font-weight:900;font-size:18px;margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{appearance:none;border:2px solid var(--line);background:var(--card2);color:var(--ink);border-radius:999px;padding:12px 16px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;min-height:52px;text-align:left}
+.chip[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.chip:focus-visible,.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.verdict{border-radius:16px;padding:18px;margin-top:16px;border:2px solid var(--line);background:var(--bg2)}
+.verdict.level0{border-color:var(--line)}
+.verdict.level1{background:var(--amber-bg);border-color:var(--amber)}
+.verdict.level2,.verdict.level3{background:var(--red-bg);border-color:var(--red)}
+.verdict .v-title{font-size:22px;font-weight:900;margin:0 0 6px;line-height:1.35}
+.verdict p{margin:0}
+.dodont{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dobox{border-radius:16px;padding:16px}
+.dobox.ng{background:var(--red-bg);border:1px solid var(--red-soft)}
+.dobox.ok{background:var(--green-soft);border:1px solid var(--line)}
+.dobox h3{margin-top:0}
+.dobox ul{margin:0;padding-left:1.2em}
+.dobox li{margin:6px 0;font-weight:500}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{appearance:none;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px;border-radius:999px;font:inherit;font-weight:800;cursor:pointer}
+.tab.active{background:var(--green);color:#fff;border-color:var(--green)}
+.close-panel{display:none}
+.close-panel.active{display:block}
+.close-panel ol{margin:0;padding-left:1.4em}
+.close-panel li{margin:10px 0;font-weight:500}
+kbd{background:var(--ink);color:var(--bg);padding:2px 8px;border-radius:6px;font-family:inherit;font-weight:800;font-size:.92em;white-space:nowrap}
+.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fake{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.fake-screen{padding:16px;min-height:168px;color:#fff;position:relative}
+.fake-screen.red{background:#991b1b}.fake-screen.blue{background:#1e3a8a}.fake-screen.dark{background:#111827}
+.fake-screen .fs-title{font-weight:900;font-size:18px;line-height:1.35}
+.fake-screen .fs-body{font-size:13px;line-height:1.6;opacity:.95;margin-top:8px}
+.fake-screen .fs-phone{display:inline-block;background:#fff;color:#991b1b;font-weight:900;padding:4px 8px;border-radius:6px;margin-top:10px;font-size:14px}
+.fake-caption{padding:14px}
+.fake-caption strong{display:block;margin-bottom:6px}
+.fake-caption ul{margin:0;padding-left:1.15em;color:var(--ink2);font-size:14.5px}
+.btn{appearance:none;border:0;border-radius:999px;padding:16px 26px;font:inherit;font-weight:900;font-size:18px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;justify-content:center}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 8px 20px rgba(23,114,69,.25)}
+.btn-secondary{background:var(--card);color:var(--ink);border:2px solid var(--line)}
+.btn:active{transform:translateY(1px)}
+.health-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.selfq{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--card2)}
+.selfq p{margin:0 0 10px;font-weight:800;line-height:1.5}
+.selfq .opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{flex:1;min-width:110px;appearance:none;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px;font:inherit;font-weight:800;cursor:pointer}
+.opt[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.result-sheet{background:#fff;color:#17251a;border:2px solid #cbdccf;border-radius:8px;padding:22px;position:relative;overflow:hidden}
+@media(prefers-color-scheme:dark){.result-sheet{background:#f7fbf7}}
+.result-sheet h3{margin:0;font-size:22px;border-bottom:3px double #9db8a3;padding-bottom:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.result-sheet h3 span{font-size:13px;font-weight:700;color:#5b6f5f}
+.stamp{position:absolute;right:16px;top:58px;width:104px;height:104px;border:3px solid #b91c1c;color:#b91c1c;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;line-height:1.25;transform:rotate(10deg);font-size:17px;background:rgba(255,255,255,.82);padding:8px}
+.result-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:15.5px}
+.result-table th,.result-table td{border-bottom:1px solid #dce8de;padding:10px 8px;text-align:left;vertical-align:top}
+.result-table th{width:34%;color:#3d5744}
+.grade{font-weight:900;white-space:nowrap}
+.grade.good{color:#15803d}.grade.mid{color:#b45309}.grade.bad{color:#b91c1c}.grade.unknown{color:#64748b}
+.advice{background:var(--green-soft);border-radius:14px;padding:16px;margin-top:16px}
+.advice ul{margin:8px 0 0;padding-left:1.2em}
+.note{font-size:14px;color:var(--ink2)}
+.big-callout{background:var(--ink);color:#fff;border-radius:var(--radius);padding:22px;margin:28px 0 0;text-align:center}
+@media(prefers-color-scheme:dark){.big-callout{background:#e8f3ea;color:#122016}}
+.big-callout p{margin:0;font-size:clamp(20px,3.6vw,28px);font-weight:900;line-height:1.5}
+.big-callout span{display:block;font-size:15px;font-weight:500;opacity:.85;margin-top:8px}
+footer{padding:28px 0 0;color:var(--ink2);font-size:14px;text-align:center}
+.hidden{display:none!important}
+.progress{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.progress i{display:block;height:100%;background:var(--green);width:0;transition:width .4s}
+.toast{margin-top:10px;font-weight:700;color:var(--green)}
+.flow6{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.flow-step{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--card2)}
+.flow-step b.num{display:inline-flex;width:34px;height:34px;border-radius:50%;background:#0e7490;color:#fff;align-items:center;justify-content:center;font-size:16px;margin-bottom:6px}
+.flow-step strong{display:block;font-size:16.5px;line-height:1.45}
+.flow-step span{font-size:14px;color:var(--ink2);line-height:1.55;display:block;margin-top:4px}
+.safe-list{margin:0;padding-left:1.2em}
+.safe-list li{margin:7px 0;font-weight:500}
+.status-box{border:2px dashed var(--amber);background:var(--amber-bg);border-radius:16px;padding:18px;text-align:center}
+.status-box .badge{display:inline-block;background:var(--amber);color:#fff;font-weight:900;padding:6px 16px;border-radius:999px;font-size:15px;margin-bottom:8px}
+@media(prefers-color-scheme:dark){.status-box .badge{color:#1a1206}}
+.status-box p{margin:4px 0}
+.start-steps{margin:0;padding-left:1.4em}
+.start-steps li{margin:10px 0;font-weight:500}
+code.file{background:var(--bg2);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-family:inherit;font-weight:800;font-size:.92em;white-space:nowrap}
+@media(max-width:760px){
+  .steps3,.toolnav,.dodont,.examples,.health-grid{grid-template-columns:1fr}
+  .wrap{padding:0 14px 44px}
+  .card{padding:16px}
+  .stamp{position:static;transform:none;margin:14px 0 0;width:96px;height:96px}
+  .result-table th,.result-table td{display:block;width:100%;border-bottom:0;padding:4px 0}
+  .result-table tr{display:block;border-bottom:1px solid #dce8de;padding:10px 0}
+  .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="hero-label">🛡️ 元パソコン修理屋が作った、初心者向けの安心ページ</span>
+    <h1>その警告、<em>本物そっくりなニセモノ</em>かもしれません。<br>あわてなくて大丈夫。</h1>
+    <p class="lead">「ウイルスに感染しました」「今すぐ電話してください」——修理の現場でいちばん多かったパニックが、この手の詐欺画面でした。下の2つの道具で、落ち着いて確かめられます。お金も登録もいりません。</p>
+
+    <div class="emergency" role="region" aria-label="今、変な画面が出ている人へ">
+      <h2>⚠️ いま変な画面が出ている人へ</h2>
+      <p>まず、これだけ守ってください。ほとんどの場合、これで助かります。</p>
+      <div class="steps3">
+        <div class="step3"><b class="num">1</b><strong>電話しない</strong><span>画面の電話番号は詐欺の入り口です。本物のメーカーが画面に電話番号を大きく出すことはありません。</span></div>
+        <div class="step3"><b class="num">2</b><strong>ボタンを押さない</strong><span>「閉じる」「更新」「許可」も押さないでください。押すと別の画面が開くことがあります。</span></div>
+        <div class="step3"><b class="num">3</b><strong>画面を消す</strong><span>このページの下にある「画面の消し方」を見ながら、ブラウザごと閉じてください。</span></div>
+      </div>
+    </div>
+
+    <nav class="toolnav" aria-label="2つの道具">
+      <a href="#checker"><span class="ic">🔍</span><strong>1．あやしい画面チェッカー</strong><span>出ている画面の様子をタップするだけ。詐欺かどうかと、今やることが分かります。</span></a>
+      <a href="#tomo"><span class="ic">🔧</span><strong>2．トモ点検のご案内</strong><span>もっと詳しく見たいときのWindows用点検アプリ。何ができるかと、はじめ方を紹介します。</span></a>
+    </nav>
+  </header>
+
+  <!-- ========== 1. チェッカー ========== -->
+  <section id="checker">
+    <div class="sec-head"><div class="sec-num">1</div><div><h2>あやしい画面チェッカー</h2><p>いま出ている画面に、当てはまるものを全部タップしてください。</p></div></div>
+
+    <div class="card">
+      <p class="q-label">こんな様子はありませんか？</p>
+      <div class="chips" id="symptoms">
+        <button class="chip" aria-pressed="false" data-w="3">📞 電話番号が大きく出ている</button>
+        <button class="chip" aria-pressed="false" data-w="3">💳 お金やコンビニのカードを買えと言われる</button>
+        <button class="chip" aria-pressed="false" data-w="3">🖥️ 遠隔操作ソフトを入れろと言われる</button>
+        <button class="chip" aria-pressed="false" data-w="2">🔊 警告音や声が鳴り続ける</button>
+        <button class="chip" aria-pressed="false" data-w="2">⏰ カウントダウンで急がされる</button>
+        <button class="chip" aria-pressed="false" data-w="2">🔒 画面が全画面で、閉じられない</button>
+        <button class="chip" aria-pressed="false" data-w="1">🏢 Microsoft / Windows のロゴがある</button>
+        <button class="chip" aria-pressed="false" data-w="1">✍️ 日本語が少し変・カタコトっぽい</button>
+        <button class="chip" aria-pressed="false" data-w="1">🦠 「ウイルス○件検出」と出ている</button>
+        <button class="chip" aria-pressed="false" data-w="1">🌐 心当たりのないサイトで急に出た</button>
+      </div>
+
+      <div class="verdict level0" id="verdict" aria-live="polite">
+        <p class="v-title" id="vTitle">まだ選ばれていません</p>
+        <p id="vBody">上のボタンをタップすると、ここに判定と「今やること」が出ます。1つでも当てはまったら、この先を読んでください。</p>
+      </div>
+    </div>
+
+    <div class="dodont">
+      <div class="dobox ng card" style="margin:0;box-shadow:none">
+        <h3>🚫 絶対にしないこと</h3>
+        <ul>
+          <li>表示された番号に<strong>電話する</strong></li>
+          <li>クレジットカードや銀行の情報を入力する</li>
+          <li>言われるまま<strong>遠隔操作ソフト</strong>を入れる</li>
+          <li>コンビニでプリペイドカードを買って番号を教える</li>
+          <li>「閉じる」以外のボタンや広告を押す</li>
+        </ul>
+      </div>
+      <div class="dobox ok card" style="margin:0;box-shadow:none">
+        <h3>✅ やって大丈夫なこと</h3>
+        <ul>
+          <li>ブラウザを<strong>そのまま閉じる</strong>（下に手順あり）</li>
+          <li>パソコンを再起動する</li>
+          <li>家族や、近くの修理屋さんに画面の写真を見せる</li>
+          <li>閉じたあと、いつも通り使えているか様子を見る</li>
+          <li>もし電話してしまったら、警察相談 <strong>#9110</strong> へ</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>画面の消し方（閉じられないとき）</h3>
+      <div class="tabs" role="tablist" aria-label="お使いの機械">
+        <button class="tab active" data-tab="win">Windows</button>
+        <button class="tab" data-tab="mac">Mac</button>
+        <button class="tab" data-tab="phone">スマホ・タブレット</button>
+      </div>
+      <div class="close-panel active" id="panel-win">
+        <ol>
+          <li>まず <kbd>Esc</kbd> キーを長押ししてみてください。全画面が解除されることがあります。</li>
+          <li>ダメなら <kbd>Alt</kbd> + <kbd>F4</kbd> を押して、ブラウザを閉じます。</li>
+          <li>それでもダメなら <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd> で「タスクマネージャー」を開き、使っているブラウザ（Edge / Chrome など）を選んで「タスクの終了」を押します。</li>
+          <li>何も効かないときは、電源ボタンを長押しして切っても大丈夫です。大事な作業中のファイルは消えることがあるので、これは最後の手段にしてください。</li>
+          <li>再起動後、ブラウザを開いて「前回のページを復元しますか？」と出たら、<strong>復元しない</strong>を選んでください。</li>
+        </ol>
+      </div>
+      <div class="close-panel" id="panel-mac">
+        <ol>
+          <li><kbd>Esc</kbd> キーを長押しして、全画面を解除してみてください。</li>
+          <li><kbd>Command</kbd> + <kbd>Q</kbd> でブラウザを終了します。</li>
+          <li>ダメなら <kbd>Option</kbd> + <kbd>Command</kbd> + <kbd>Esc</kbd> で「強制終了」画面を開き、ブラウザを選んで「強制終了」。</li>
+          <li>再び開いたときに「ページを復元」と出たら、復元しないでください。</li>
+        </ol>
+      </div>
+      <div class="close-panel" id="panel-phone">
+        <ol>
+          <li>ブラウザのタブ一覧を開いて、そのページのタブだけを閉じます。</li>
+          <li>閉じられないときは、アプリ切り替え画面からブラウザを上（または横）にスワイプして終了します。</li>
+          <li>「ウイルスが検出されました」と出ても、スマホの設定や公式ストア以外からアプリを入れないでください。</li>
+        </ol>
+      </div>
+      <p class="note">※ 画面を消せたあと、パソコンがいつも通り動いていれば、実際にウイルスに入られた可能性は低いです。詐欺画面の多くは「ブラウザに映った絵」だけだからです。</p>
+    </div>
+
+    <h3 style="margin:26px 0 6px;font-size:21px">よくあるニセ画面の例</h3>
+    <p class="note" style="margin-top:0">本物そっくりに作られています。見分けのコツは「あおって、電話かお金に誘導すること」です。</p>
+    <div class="examples">
+      <article class="fake">
+        <div class="fake-screen red"><div class="fs-title">⚠️ ウイルスに感染しました！</div><div class="fs-body">あなたのパソコンは3つのウイルスに感染しています。今すぐ対処しないとデータが消えます。残り時間 04:59</div><span class="fs-phone">☎ 050-XXXX-XXXX に今すぐ電話</span></div>
+        <div class="fake-caption"><strong>型1：感染警告＋電話型</strong><ul><li>カウントダウンで焦らせる</li><li>電話番号がやたら大きい</li><li>警告音が鳴ることが多い</li></ul></div>
+      </article>
+      <article class="fake">
+        <div class="fake-screen blue"><div class="fs-title">Windows セキュリティ警告</div><div class="fs-body">不審なアクセスを検出したため、このパソコンをロックしました。Microsoft サポートへ連絡してください。</div><span class="fs-phone" style="color:#1e3a8a">サポート窓口はこちら</span></div>
+        <div class="fake-caption"><strong>型2：メーカーなりすまし型</strong><ul><li>ロゴや色が本物そっくり</li><li>でも連絡先は公式サイトに載っていない番号</li><li>「ロックした」と脅す</li></ul></div>
+      </article>
+      <article class="fake">
+        <div class="fake-screen dark"><div class="fs-title">お支払いが完了していません</div><div class="fs-body">動画サイトの未納料金があります。今日中にプリペイドカードでお支払いください。</div><span class="fs-phone" style="color:#111827">カードの番号を入力</span></div>
+        <div class="fake-caption"><strong>型3：料金請求型</strong><ul><li>心当たりのない請求</li><li>コンビニのカードで払わせる</li><li>「今日中」と期限で急がせる</li></ul></div>
+      </article>
+    </div>
+  </section>
+
+
+  <!-- ========== 2. トモ点検 ========== -->
+  <section id="tomo">
+    <div class="sec-head"><div class="sec-num" style="background:#0e7490">2</div><div><h2>トモ点検のご案内</h2><p>このページで測りきれないところを、Windowsの中でじっくり調べる点検アプリです。</p></div></div>
+
+    <div class="card">
+      <h3>トモ点検って、なに？</h3>
+      <p style="margin:0 0 10px">「元パソコン修理屋の本音」の視聴者向けに作った、<strong>Windowsパソコン専用</strong>の点検・お手入れアプリです。パソコンにあまり詳しくない方でも迷わないよう、<strong>5つの工程</strong>を順番に進める形にしてあります。</p>
+      <p class="note" style="margin:0">※ トモ点検はダウンロードして使うWindowsのアプリです。このページの中で動くものではありません。スマホやMacでは使えません。現在の最新版は v1.15.1 です。</p>
+    </div>
+
+    <div class="card">
+      <h3>5つの工程の流れ</h3>
+      <div class="flow6">
+        <div class="flow-step"><b class="num">1</b><strong>基本診断</strong><span>最初は状態を見るだけ。何も変更しないので、安心して始められます。</span></div>
+        <div class="flow-step"><b class="num">2</b><strong>保護の記録</strong><span>復元ポイントの作成などで、何かあっても「戻れる準備」をします。</span></div>
+        <div class="flow-step"><b class="num">3</b><strong>修復</strong><span>Windowsの修復は確認してから実行し、終わったらもう一度状態を確認します。更新がうまくいかないときの診断・修復もここで行います。</span></div>
+        <div class="flow-step"><b class="num">4</b><strong>更新</strong><span>WindowsやMicrosoft製品、ストアアプリ、Edge・Chrome・Officeの更新を確認・適用します。自動更新ではドライバーは対象外です。</span></div>
+        <div class="flow-step"><b class="num">5</b><strong>結果とレポート</strong><span>やったことを記録に残すので、あとから家族や修理屋さんに見せられます。</span></div>
+      </div>
+      <p class="note" style="margin:12px 0 0">※ 工程2では、任意で「まるごとバックアップ」も使えます（システム全体のバックアップ）。</p>
+    </div>
+
+    <div class="dodont">
+      <div class="dobox ok card" style="margin:0;box-shadow:none">
+        <h3>🛡️ 安全への配慮</h3>
+        <ul class="safe-list">
+          <li>作業は<strong>読み取り専用の診断から</strong>始まります</li>
+          <li>直す・更新する操作は、<strong>実行前に必ず確認画面</strong>が出ます</li>
+          <li>始める前に記録（ジャーナル）を書き、実行直前に内容を再確認します</li>
+          <li>直し作業が同時に重なって動かない仕組みがあります</li>
+          <li><strong>勝手に再起動はしません</strong></li>
+        </ul>
+      </div>
+      <div class="dobox ok card" style="margin:0;box-shadow:none;background:var(--card2)">
+        <h3>🚀 はじめ方（3ステップ）</h3>
+        <ol class="start-steps">
+          <li>配布ファイルを受け取ったら、フォルダを解凍（展開）します。</li>
+          <li>最初に一度だけ <code class="file">最初に実行_ブロック解除.bat</code> を実行します。ダウンロードした印（ブロック）が付いたままだと起動できないためで、パソコンの設定そのものは変更しません。</li>
+          <li><code class="file">起動.vbs</code> からトモ点検を起動します。詳しくは同梱の <code class="file">最初にお読みください.txt</code> にも書いてあります。</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;text-align:center">
+      <h3>ダウンロード</h3>
+      <p style="margin:0 0 16px">トモ点検は、GitHubで無料配布しています。下のボタンから入手できます。</p>
+      <a class="btn btn-primary" href="https://github.com/noburin1/tomocheck/releases/latest" target="_blank" rel="noopener">⬇ トモ点検 v1.15.1 をダウンロード（GitHub）</a>
+      <p class="note" style="margin:14px 0 0">Windows 11専用です。ダウンロード後、最初に「最初に実行_ブロック解除.bat」を1回実行してから起動してください。</p>
+    </div>
+  </section>
+
+  <div class="big-callout">
+    <p>大丈夫、あわてて買い替えなくていい。<br>まかしといて、の気持ちで作りました。</p>
+    <span>変な画面は「閉じる」が正解のことがほとんどです。困ったら、このページを思い出してください。</span>
+  </div>
+
+  <footer>
+    <p>元パソコン修理屋の本音（@pc_shuriya）より ／ このページの診断は目安です。お金や個人情報に関わる画面では、必ず家族や公式窓口にも確認してください。</p>
+  </footer>
+</div>
+
+<script>
+// ---------- 1. あやしい画面チェッカー ----------
+var chips = document.querySelectorAll('#symptoms .chip');
+var verdict = document.getElementById('verdict');
+var vTitle = document.getElementById('vTitle');
+var vBody = document.getElementById('vBody');
+function updateVerdict(){
+  var score=0, count=0;
+  chips.forEach(function(c){ if(c.getAttribute('aria-pressed')==='true'){ score+=parseInt(c.dataset.w,10); count++; }});
+  verdict.className='verdict '+(score===0?'level0':score<=2?'level1':score<=5?'level2':'level3');
+  if(count===0){ vTitle.textContent='まだ選ばれていません'; vBody.textContent='上のボタンをタップすると、ここに判定と「今やること」が出ます。1つでも当てはまったら、この先を読んでください。'; }
+  else if(score<=2){ vTitle.textContent='⚠️ 要注意：本物かどうか、落ち着いて確かめましょう'; vBody.innerHTML='当てはまりが少ないので断定はできませんが、<strong>その画面の番号に電話したり、お金を払ったりはまだしないでください。</strong>いったんブラウザを閉じて、公式サイトや公式アプリから同じお知らせがあるか確かめるのが安全です。'; }
+  else if(score<=5){ vTitle.textContent='🚨 詐欺の可能性が高いです'; vBody.innerHTML='<strong>電話しない・押さない・払わない。</strong>この3つを守って、下の「画面の消し方」でブラウザを閉じてください。閉じたあと普通に使えていれば、被害は出ていないことがほとんどです。'; }
+  else { vTitle.textContent='🚨 ほぼ詐欺です。今すぐ画面を閉じてください'; vBody.innerHTML='特徴が何個も重なっています。これは本物の警告の出方ではありません。<strong>絶対に電話せず、遠隔操作ソフトも入れないでください。</strong>下の手順でブラウザを閉じましょう。もし既に電話したり操作を許したりした場合は、警察相談ダイヤル <strong>#9110</strong> と、使っている銀行・カード会社へ連絡してください。'; }
+}
+chips.forEach(function(c){ c.addEventListener('click', function(){ var on=c.getAttribute('aria-pressed')==='true'; c.setAttribute('aria-pressed', on?'false':'true'); updateVerdict(); }); });
+
+// ---------- 画面の消し方タブ ----------
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+    t.classList.add('active');
+    document.querySelectorAll('.close-panel').forEach(function(p){p.classList.remove('active')});
+    document.getElementById('panel-'+t.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
