@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#0d1512" />
+    <link rel="apple-touch-icon" href="../icon-180.png" />
+    <link rel="icon" href="data:," />
+    <title>Wi-Fi安全チェック</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #eef2ee;
+        --bg-2: #e3eae3;
+        --surface: #ffffff;
+        --surface-2: #f4f7f4;
+        --ink: #16211b;
+        --ink-2: #44534a;
+        --ink-3: #71806f;
+        --line: #d5ded4;
+        --green: #0c6b4f;
+        --green-soft: #e0efe7;
+        --green-mid: #2e9e77;
+        --amber: #9a6206;
+        --amber-soft: #fbf0d7;
+        --red: #b3352c;
+        --red-soft: #fbe7e3;
+        --blue: #1d5fa8;
+        --blue-soft: #e2edf8;
+        --gray-soft: #e8ece8;
+        --shadow: 0 1px 2px rgba(18, 32, 24, .06), 0 10px 28px -18px rgba(18, 32, 24, .28);
+        --radius: 14px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0c1210;
+          --bg-2: #101713;
+          --surface: #161e19;
+          --surface-2: #1b251f;
+          --ink: #e7efe9;
+          --ink-2: #aebdb2;
+          --ink-3: #7e8f83;
+          --line: #2b3830;
+          --green: #4cc794;
+          --green-soft: #143327;
+          --green-mid: #35b985;
+          --amber: #e8b34b;
+          --amber-soft: #3a2d10;
+          --red: #f08074;
+          --red-soft: #3d1a16;
+          --blue: #7db3ec;
+          --blue-soft: #16283e;
+          --gray-soft: #232d27;
+          --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 30px -18px rgba(0,0,0,.6);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+        font-size: 15px;
+        line-height: 1.65;
+      }
+      .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 16px 56px; }
+
+      /* ---------- verdict header ---------- */
+      .verdict {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 22px;
+        display: grid;
+        grid-template-columns: 168px 1fr;
+        gap: 8px 26px;
+        align-items: center;
+      }
+      .gauge-box { text-align: center; }
+      .gauge-box svg { display: block; margin: 0 auto; max-width: 168px; width: 100%; height: auto; }
+      .gauge-track { stroke: var(--gray-soft); }
+      .gauge-arc { stroke: var(--green-mid); transition: stroke-dashoffset .8s ease, stroke .3s ease; }
+      .gauge-score {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 40px; font-weight: 600; line-height: 1;
+        margin-top: -58px;
+      }
+      .gauge-score small { font-size: 14px; color: var(--ink-3); font-weight: 500; }
+      .gauge-label { margin-top: 26px; font-size: 12px; color: var(--ink-3); font-weight: 700; letter-spacing: .04em; }
+      .verdict-main h1 { font-size: 24px; font-weight: 900; margin: 0 0 2px; line-height: 1.35; }
+      .verdict-word { font-size: 21px; font-weight: 900; margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .verdict-word .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--ink-3); flex: none; }
+      .verdict-word.ok .dot { background: var(--green-mid); }
+      .verdict-word.warn .dot { background: var(--amber); }
+      .verdict-word.bad .dot { background: var(--red); }
+      .verdict-sub { color: var(--ink-2); margin: 8px 0 0; font-size: 14px; }
+      .verdict-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: 13px; color: var(--ink-2); }
+      .verdict-meta b { color: var(--ink); font-weight: 700; }
+      .progress-line { margin-top: 14px; }
+      .progress-line .bar { height: 8px; border-radius: 99px; background: var(--gray-soft); overflow: hidden; }
+      .progress-line .bar i { display: block; height: 100%; width: 0%; background: var(--green-mid); border-radius: 99px; transition: width .5s ease; }
+      .progress-line span { font-size: 12.5px; color: var(--ink-3); }
+      .btn {
+        appearance: none; border: 1px solid var(--green); background: var(--green);
+        color: #fff; font: inherit; font-weight: 700; font-size: 14px;
+        border-radius: 10px; padding: 10px 18px; cursor: pointer; min-height: 44px;
+      }
+      @media (prefers-color-scheme: dark) { .btn { color: #08130d; } }
+      .btn:active { transform: translateY(1px); }
+      .btn.ghost { background: transparent; color: var(--green); }
+      .btn:disabled { opacity: .55; cursor: wait; }
+      .verdict-actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      .alert-banner {
+        display: none; margin-top: 16px; border: 1px solid var(--red);
+        background: var(--red-soft); color: var(--ink); border-radius: 12px; padding: 12px 14px;
+        font-size: 14px; grid-column: 1 / -1;
+      }
+      .alert-banner.show { display: block; }
+      .alert-banner b { color: var(--red); }
+
+      /* ---------- sections ---------- */
+      section { margin-top: 30px; }
+      .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 0 2px 12px; flex-wrap: wrap; }
+      .sec-head h2 { font-size: 18px; font-weight: 900; margin: 0; }
+      .sec-head p { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .card {
+        background: var(--surface); border: 1px solid var(--line);
+        border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px;
+      }
+      .card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 900; display: flex; align-items: center; gap: 8px; }
+      .card h3 svg { flex: none; }
+      .card .desc { color: var(--ink-2); font-size: 13.5px; margin: 0; }
+      .card .value { font-family: "IBM Plex Mono", monospace; font-size: 19px; font-weight: 600; margin-top: 10px; word-break: break-all; }
+      .card .value small { font-size: 12.5px; color: var(--ink-3); font-family: inherit; }
+      .pill {
+        display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700;
+        border-radius: 99px; padding: 2px 10px; white-space: nowrap;
+        background: var(--gray-soft); color: var(--ink-2);
+      }
+      .pill.ok { background: var(--green-soft); color: var(--green); }
+      .pill.warn { background: var(--amber-soft); color: var(--amber); }
+      .pill.bad { background: var(--red-soft); color: var(--red); }
+      .pill.info { background: var(--blue-soft); color: var(--blue); }
+      .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+
+      /* detail table */
+      .detail { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+      .detail dl { margin: 0; }
+      .detail .row { display: grid; grid-template-columns: 168px 1fr; gap: 6px 16px; padding: 12px 18px; }
+      .detail .row + .row { border-top: 1px solid var(--line); }
+      .detail dt { color: var(--ink-2); font-size: 13.5px; font-weight: 700; padding-top: 2px; }
+      .detail dd { margin: 0; font-size: 14.5px; word-break: break-all; }
+      .detail dd .mono { font-size: 14px; }
+      .detail dd small { color: var(--ink-3); display: block; font-size: 12.5px; }
+
+      /* checklist */
+      .check-list { display: grid; gap: 12px; }
+      .check-item {
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+        box-shadow: var(--shadow); padding: 15px 18px;
+        display: grid; grid-template-columns: 1fr auto; gap: 6px 18px; align-items: center;
+      }
+      .check-item .q { font-weight: 900; font-size: 15px; margin: 0; }
+      .check-item .why { color: var(--ink-2); font-size: 13.5px; margin: 3px 0 0; max-width: 62ch; }
+      .check-item .state { grid-row: span 2; text-align: right; }
+      .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface-2); }
+      .seg button {
+        appearance: none; border: 0; background: transparent; color: var(--ink-2);
+        font: inherit; font-size: 13px; font-weight: 700; padding: 9px 13px; cursor: pointer; min-height: 42px;
+      }
+      .seg button + button { border-left: 1px solid var(--line); }
+      .seg button.on-ok { background: var(--green); color: #fff; }
+      .seg button.on-bad { background: var(--red); color: #fff; }
+      .seg button.on-unknown { background: var(--amber); color: #fff; }
+      @media (prefers-color-scheme: dark) {
+        .seg button.on-ok, .seg button.on-bad, .seg button.on-unknown { color: #0d120e; }
+      }
+      .check-item.answered-ok { border-color: var(--green-mid); }
+      .check-item.answered-bad { border-color: var(--red); }
+      .check-item.answered-unknown { border-color: var(--amber); }
+
+      /* actions */
+      .actions-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 18px; }
+      .actions-card ol { margin: 0; padding: 0; list-style: none; counter-reset: act; }
+      .actions-card li { counter-increment: act; display: flex; gap: 12px; padding: 13px 0; align-items: flex-start; }
+      .actions-card li + li { border-top: 1px solid var(--line); }
+      .actions-card li::before {
+        content: counter(act); flex: none; width: 26px; height: 26px; border-radius: 50%;
+        background: var(--green-soft); color: var(--green); font-weight: 900; font-size: 13.5px;
+        display: grid; place-items: center; margin-top: 1px;
+      }
+      .actions-card li.urgent::before { background: var(--red-soft); color: var(--red); }
+      .actions-card li b { display: block; font-size: 14.5px; }
+      .actions-card li span { color: var(--ink-2); font-size: 13.5px; }
+      .actions-empty { padding: 16px 0; color: var(--ink-2); font-size: 14px; }
+
+      /* howto */
+      .steps { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .gw-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+      .gw-chips code {
+        font-family: "IBM Plex Mono", monospace; font-size: 13.5px;
+        background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px;
+      }
+      .emergency { border-color: var(--red); }
+      .emergency h3 { color: var(--red); }
+      .emergency ol { margin: 8px 0 0; padding-left: 20px; color: var(--ink-2); font-size: 13.5px; }
+      .emergency ol b { color: var(--ink); }
+
+      .note {
+        margin-top: 30px; background: var(--surface-2); border: 1px solid var(--line);
+        border-radius: var(--radius); padding: 16px 18px; color: var(--ink-2); font-size: 13.5px;
+      }
+      .note b { color: var(--ink); }
+      .note ul { margin: 8px 0 0; padding-left: 20px; }
+      footer { margin-top: 18px; color: var(--ink-3); font-size: 12.5px; text-align: center; }
+
+      @media (max-width: 720px) {
+        .verdict { grid-template-columns: 1fr; padding: 18px 16px; }
+        .gauge-box { order: 2; }
+        .grid, .steps { grid-template-columns: 1fr; }
+        .detail .row { grid-template-columns: 1fr; gap: 2px; }
+        .check-item { grid-template-columns: 1fr; }
+        .check-item .state { grid-row: auto; text-align: left; }
+        .verdict-main h1 { font-size: 21px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .gauge-arc, .progress-line .bar i { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <!-- ===================== verdict ===================== -->
+      <div class="verdict" role="region" aria-label="総合判定">
+        <div class="gauge-box">
+          <svg viewBox="0 0 180 104" aria-hidden="true">
+            <path class="gauge-track" d="M 14 96 A 76 76 0 0 1 166 96" fill="none" stroke-width="13" stroke-linecap="round"/>
+            <path class="gauge-arc" id="gaugeArc" d="M 14 96 A 76 76 0 0 1 166 96" fill="none" stroke-width="13" stroke-linecap="round"
+                  stroke-dasharray="238.8" stroke-dashoffset="238.8"/>
+          </svg>
+          <div class="gauge-score"><span id="scoreNum">–</span><small> / 100</small></div>
+          <div class="gauge-label">安全度スコア（目安）</div>
+        </div>
+        <div class="verdict-main">
+          <h1>Wi-Fi安全チェック</h1>
+          <p class="verdict-word" id="verdictWord"><span class="dot"></span><span id="verdictText">診断中…</span></p>
+          <p class="verdict-sub" id="verdictSub">この端末から測れる範囲で、いまの接続を自動チェックしています。下の「ルーター設定の点検」と「踏み台の兆候チェック」に答えると、判定が正確になります。</p>
+          <div class="verdict-meta">
+            <span>診断時刻：<b class="mono" id="checkedAt">—</b></span>
+            <span>接続状態：<b id="onlineState">確認中</b></span>
+          </div>
+          <div class="progress-line">
+            <div class="bar"><i id="coverageBar"></i></div>
+            <span id="coverageText">点検の進み具合：0%</span>
+          </div>
+          <div class="verdict-actions">
+            <button class="btn" id="rerunBtn" type="button">再チェックする</button>
+            <button class="btn ghost" id="resetBtn" type="button">点検の回答をリセット</button>
+          </div>
+        </div>
+        <div class="alert-banner" id="alertBanner" role="alert"></div>
+      </div>
+
+      <!-- ===================== auto checks ===================== -->
+      <section aria-labelledby="autoH">
+        <div class="sec-head">
+          <h2 id="autoH">自動チェック</h2>
+          <p>この端末・ブラウザから実際に測った結果です。開いた瞬間に計測します。</p>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <div class="card-top">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                通信の暗号化
+              </h3>
+              <span class="pill" id="pillHttps">計測中</span>
+            </div>
+            <p class="desc">このページが暗号化された接続（HTTPS）で表示されているかを確認します。</p>
+            <div class="value" id="valHttps">—</div>
+          </div>
+          <div class="card">
+            <div class="card-top">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9c6-5.5 14-5.5 20 0"/><path d="M5.5 12.5c4-3.5 9-3.5 13 0"/><path d="M9 16c1.8-1.5 4.2-1.5 6 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg>
+                応答速度（ping相当）
+              </h3>
+              <span class="pill" id="pillPing">計測中</span>
+            </div>
+            <p class="desc">外部サーバーへの応答を5回測った中央値です。極端に遅い・不安定な場合は、混雑や異常の手がかりになります。</p>
+            <div class="value" id="valPing">—</div>
+          </div>
+          <div class="card">
+            <div class="card-top">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>
+                推定ダウンロード速度
+              </h3>
+              <span class="pill" id="pillSpeed">計測中</span>
+            </div>
+            <p class="desc">1MBのデータを実際に受信して測った推定値です。時間帯や混雑で変動します。</p>
+            <div class="value" id="valSpeed">—</div>
+          </div>
+          <div class="card">
+            <div class="card-top">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v5c0 5-3.2 8.4-7 10-3.8-1.6-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>
+                ローカルIPの露出（WebRTC）
+              </h3>
+              <span class="pill" id="pillRtc">計測中</span>
+            </div>
+            <p class="desc">Webサイト側から端末のローカルIPが見えてしまうかを確認します。最近のブラウザは仮の名前（mDNS）で隠すのが標準です。</p>
+            <div class="value" id="valRtc" style="font-size:15px;">—</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== connection detail ===================== -->
+      <section aria-labelledby="detailH">
+        <div class="sec-head">
+          <h2 id="detailH">いまの接続の詳細</h2>
+          <p>外部から見た「あなたの回線」の姿です。公開IPが想定と違う国・事業者になっていたら要注意です。</p>
+        </div>
+        <div class="detail">
+          <dl>
+            <div class="row"><dt>公開IPアドレス</dt><dd><span class="mono" id="dIp">取得中…</span><small id="dIpVer"></small></dd></div>
+            <div class="row"><dt>接続事業者（ISP）</dt><dd id="dIsp">取得中…</dd></div>
+            <div class="row"><dt>おおよその地域</dt><dd id="dGeo">取得中…<small>IPアドレスから推定した地域です。実際の住所とは異なります。</small></dd></div>
+            <div class="row"><dt>DNSサーバー</dt><dd><span class="mono" id="dDns">取得中…</span><small id="dDnsGeo"></small></dd></div>
+            <div class="row"><dt>端末のローカルIP</dt><dd><span class="mono" id="dLocal">確認中…</span><small>家庭内ネットワークでの、この端末の住所です。</small></dd></div>
+            <div class="row"><dt>回線の種別（推定）</dt><dd id="dConn">確認中…<small>ブラウザが対応している端末でのみ表示されます（iPhoneのSafariなどでは取得できません）。</small></dd></div>
+            <div class="row"><dt>Wi-Fi名（SSID）</dt><dd>ブラウザからは取得できません<small>接続中のWi-Fi名は、端末の設定アプリ（設定 → Wi-Fi）で確認してください。</small></dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ===================== router checklist ===================== -->
+      <section aria-labelledby="routerH">
+        <div class="sec-head">
+          <h2 id="routerH">ルーター設定の点検</h2>
+          <p>ルーターの中はブラウザから見えません。管理画面で確認しながら答えてください（開き方は下の「確認のしかた」）。</p>
+        </div>
+        <div class="check-list" id="routerList"></div>
+      </section>
+
+      <!-- ===================== symptom checklist ===================== -->
+      <section aria-labelledby="symH">
+        <div class="sec-head">
+          <h2 id="symH">踏み台の兆候チェック</h2>
+          <p>「踏み台」は、あなたの回線や端末が他人の攻撃・迷惑行為の中継に使われる状態です。心当たりがある項目は「はい」を選んでください。</p>
+        </div>
+        <div class="check-list" id="symList"></div>
+      </section>
+
+      <!-- ===================== actions ===================== -->
+      <section aria-labelledby="actH">
+        <div class="sec-head">
+          <h2 id="actH">やることリスト</h2>
+          <p>チェック結果から、いま対応したほうがいいことを優先順に並べます。</p>
+        </div>
+        <div class="actions-card"><ol id="actionList"></ol><p class="actions-empty" id="actionEmpty">点検に答えると、ここに表示されます。</p></div>
+      </section>
+
+      <!-- ===================== howto ===================== -->
+      <section aria-labelledby="howH">
+        <div class="sec-head"><h2 id="howH">確認のしかた</h2></div>
+        <div class="steps">
+          <div class="card">
+            <h3>ルーター管理画面の開き方</h3>
+            <p class="desc">
+              ① Wi-Fiに接続した状態で、ブラウザのアドレス欄にルーターのアドレスを入力します（メーカーで異なります）。
+              ② 初期ID・パスワードはルーター本体のシールや説明書に書かれています。
+              ③ 開いたら「接続中デバイス（クライアント一覧）」「無線LAN設定」「ファームウェア更新」を探してください。
+            </p>
+            <div class="gw-chips">
+              <code>192.168.1.1</code><code>192.168.0.1</code><code>192.168.11.1（バッファロー）</code><code>192.168.10.1（NEC Aterm）</code>
+            </div>
+            <p class="desc" style="margin-top:10px;">分からない場合は、ルーターの型番で「（型番） 管理画面 開き方」と検索するとメーカーの案内が出ます。</p>
+          </div>
+          <div class="card emergency">
+            <h3>踏み台が強く疑われるとき</h3>
+            <ol>
+              <li><b>疑わしい端末をWi-Fiから切る</b>（電源を切る／接続一覧からブロック）</li>
+              <li><b>ルーター管理パスワードとWi-Fiパスワードを両方変更</b>する</li>
+              <li><b>ファームウェアを最新化</b>する</li>
+              <li>全端末を接続し直し、一覧に見覚えのない端末が残っていないか再確認する</li>
+              <li>解消しない場合は<b>ルーターを初期化</b>し、契約中の<b>プロバイダへ相談</b>する</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <div class="note">
+        <b>このページで分かること・分からないこと</b>
+        <ul>
+          <li>分かること：この端末から見た回線の状態（公開IP・事業者・速度・応答）、Webサイト側への情報の見え方、あなたの申告に基づくルーター設定と兆候の整理。</li>
+          <li>分からないこと：ルーター内部の設定そのもの、接続中の全端末の一覧の自動取得、他端末への感染の有無。ブラウザには家庭内ネットワークを直接調べる権限がないため、接続中の端末の一覧はこのページでは取得できません。端末の確認は、ルーター管理画面の接続一覧で直接行ってください。</li>
+          <li>「異常なし」は「絶対に安全」の保証ではありません。兆候チェックで「はい」が1つでもあれば、スコアにかかわらず対処してください。</li>
+        </ul>
+      </div>
+
+      <footer>Wi-Fi安全チェック ・ 計測はこの端末のブラウザの中で行われ、回答は保存されません（ページを閉じると消えます）</footer>
+    </div>
+
+    <script>
+      (function () {
+        'use strict';
+
+        /* ---------------- data ---------------- */
+        var ROUTER_ITEMS = [
+          { id: 'enc', w: 8, q: 'Wi-Fiの暗号化は WPA3 または WPA2（AES）になっている',
+            why: '管理画面の「無線LAN設定」で確認します。「WEP」「暗号化なし（オープン）」は数分で破られる方式です。',
+            act: '暗号化方式を WPA3 / WPA2-AES に変更する', actD: '管理画面の無線LAN設定で変更できます。変更後は全端末の再接続が必要です。' },
+          { id: 'wifipass', w: 7, q: 'Wi-Fiのパスワードは初期値から変えた、長いものを使っている',
+            why: '初期パスワードは本体シールを見れば誰でも分かります。13文字以上の推測しにくい文字列が目安です。',
+            act: 'Wi-Fiパスワードを変更する', actD: '初期値のままなら今すぐ変更を。変更すると全端末で再入力が必要です。' },
+          { id: 'adminpass', w: 8, q: 'ルーター管理画面のパスワードは初期値から変更済み',
+            why: 'admin / password などの初期値のままだと、家庭内の1台が乗っ取られただけで設定を書き換えられます。',
+            act: 'ルーター管理画面のパスワードを変更する', actD: '最優先です。変更後は新しいパスワードを控えておいてください。' },
+          { id: 'fw', w: 7, q: 'ルーターのファームウェアは最新（または自動更新がON）',
+            why: '古いファームウェアの脆弱性は、踏み台化の代表的な入口です。自動更新があればONにしておきます。',
+            act: 'ファームウェアを更新する', actD: '管理画面の「ファームウェア更新」から確認・実行できます。' },
+          { id: 'wps', w: 5, q: 'WPS機能はOFFになっている',
+            why: 'ボタンやPINで簡単につながるWPSは、PIN方式に破られやすい欠陥が知られています。使っていないならOFFに。',
+            act: 'WPSをOFFにする', actD: '管理画面の無線LAN設定内にあります。プリンター接続などで使う場合だけ一時的にONにします。' },
+          { id: 'remote', w: 6, q: '外部（インターネット側）から管理画面を開く設定はOFF',
+            why: '「リモート管理」「WAN側からの設定」がONだと、世界中から管理画面への攻撃を受けます。通常は不要です。',
+            act: 'リモート管理をOFFにする', actD: '管理画面の「外部アクセス」「リモート管理」などの項目を確認してください。' },
+          { id: 'upnp', w: 4, q: 'UPnPは、使う機器がある場合を除きOFF／把握している',
+            why: 'UPnPは端末が勝手に外部への通り道を開けられる機能です。感染端末が悪用する例があります。',
+            act: 'UPnPの設定を確認する', actD: 'ゲーム機などで必要な場合もあります。不要ならOFF、必要なら感染兆候がないか併せて確認を。' },
+          { id: 'guest', w: 5, q: '来客用・IoT機器用にゲストネットワーク等で分けている',
+            why: 'カメラやスマート家電などのIoT機器と、PC・スマホを同じネットワークに混ぜないことで、被害の広がりを抑えられます。',
+            act: 'ゲストネットワークの利用を検討する', actD: '多くのルーターには「ゲストポート／ゲストSSID」機能があります。IoT機器はそちらへ寄せるのがおすすめです。' }
+        ];
+        var SYMPTOMS = [
+          { id: 'unknowndev', w: 5, crit: true, q: '接続中デバイス一覧に、見覚えのない端末名・アドレスがある',
+            why: '家族全員の端末と台数を数えて照合してください。スマート家電やゲーム機の数え忘れにも注意。',
+            act: '見覚えのない端末を特定・切断する', actD: 'まず家族の端末を全部切り、残る端末がないか確認を。残る場合はWi-Fiパスワード変更まで行ってください。' },
+          { id: 'traffic', w: 3, crit: false, q: '使っていない時間帯に通信量が急増／ルーターのランプが激しく点滅する',
+            why: '誰も使っていない深夜などに大量通信がある場合、端末が勝手に通信している可能性があります。',
+            act: '大量通信している端末を特定する', actD: '管理画面の通信量表示や、各端末の電源を1台ずつ切って様子を見る方法があります。' },
+          { id: 'settings', w: 4, crit: true, q: 'ルーターの設定やWi-Fiパスワードが勝手に変わっていたことがある',
+            why: '設定の書き換えは、乗っ取りの強い兆候です。家族が変えていないか確認したうえで判断してください。',
+            act: '管理パスワードとWi-Fiパスワードを両方変更する', actD: 'あわせてファームウェア更新と、リモート管理がONになっていないか確認してください。' },
+          { id: 'slow', w: 2, crit: false, q: '心当たりなく、ネットが遅い状態が続いている',
+            why: '混雑や故障でも起こりますが、回線を他人に使われている場合にも起こります。他の兆候と合わせて見ます。',
+            act: '速度低下の原因を切り分ける', actD: '上の自動チェックの速度・応答と、接続中デバイス一覧を照らし合わせてください。' },
+          { id: 'reported', w: 4, crit: true, q: 'プロバイダや知人から「不審な送信の元になっている」と言われた',
+            why: '迷惑メールや攻撃の送信元として自分の回線IPが使われている可能性を示す、重要なサインです。',
+            act: 'プロバイダへ相談する', actD: '連絡を受けた内容を控え、プロバイダのサポート窓口へ。並行してパスワード変更とファームウェア更新を行ってください。' },
+          { id: 'apps', w: 2, crit: false, q: '端末に見覚えのないアプリ・構成プロファイル・VPN設定が増えている',
+            why: 'iPhoneは「設定 → 一般 → VPNとデバイス管理」、Androidはアプリ一覧で確認できます。',
+            act: '見覚えのないアプリ・設定を削除する', actD: '削除できない場合は、その端末の初期化やメーカーサポートへの相談を検討してください。' }
+        ];
+
+        /* ---------------- state ---------------- */
+        var auto = { https: null, ping: null, speed: null, rtc: null }; // earned weight or null=unmeasured
+        var AUTO_W = { https: 10, ping: 10, rtc: 10 };
+        var manualAns = {};   // id -> 'ok' | 'bad' | 'unknown'
+        var symAns = {};      // id -> 'yes' | 'no'
+        var $ = function (id) { return document.getElementById(id); };
+
+        /* ---------------- build checklists ---------------- */
+        function buildList(el, items, kind) {
+          items.forEach(function (it) {
+            var div = document.createElement('div');
+            div.className = 'check-item'; div.id = 'item-' + it.id;
+            var txt = document.createElement('div');
+            var q = document.createElement('p'); q.className = 'q'; q.textContent = it.q;
+            var why = document.createElement('p'); why.className = 'why'; why.textContent = it.why;
+            txt.appendChild(q); txt.appendChild(why);
+            var state = document.createElement('div'); state.className = 'state';
+            var seg = document.createElement('div'); seg.className = 'seg'; seg.setAttribute('role', 'group');
+            var defs = kind === 'router'
+              ? [['ok', 'OK'], ['bad', '要対応'], ['unknown', 'わからない']]
+              : [['no', 'いいえ'], ['yes', 'はい']];
+            defs.forEach(function (d) {
+              var b = document.createElement('button');
+              b.type = 'button'; b.textContent = d[1]; b.dataset.val = d[0];
+              b.setAttribute('aria-pressed', 'false');
+              b.addEventListener('click', function () {
+                if (kind === 'router') manualAns[it.id] = d[0]; else symAns[it.id] = d[0];
+                paintItem(it.id, kind);
+                updateScore();
+              });
+              seg.appendChild(b);
+            });
+            state.appendChild(seg);
+            div.appendChild(txt); div.appendChild(state);
+            el.appendChild(div);
+          });
+        }
+        function paintItem(id, kind) {
+          var div = $('item-' + id); if (!div) return;
+          var val = kind === 'router' ? manualAns[id] : symAns[id];
+          div.classList.remove('answered-ok', 'answered-bad', 'answered-unknown');
+          var btns = div.querySelectorAll('.seg button');
+          btns.forEach(function (b) {
+            b.classList.remove('on-ok', 'on-bad', 'on-unknown');
+            b.setAttribute('aria-pressed', 'false');
+            if (b.dataset.val === val) {
+              b.setAttribute('aria-pressed', 'true');
+              if (val === 'ok' || val === 'no') b.classList.add('on-ok');
+              else if (val === 'unknown') b.classList.add('on-unknown');
+              else b.classList.add('on-bad');
+            }
+          });
+          if (val === 'ok' || val === 'no') div.classList.add('answered-ok');
+          else if (val === 'unknown') div.classList.add('answered-unknown');
+          else if (val) div.classList.add('answered-bad');
+        }
+        buildList($('routerList'), ROUTER_ITEMS, 'router');
+        buildList($('symList'), SYMPTOMS, 'sym');
+
+        /* ---------------- scoring ---------------- */
+        function compute() {
+          var earned = 0, possible = 0, totalW = 0;
+          Object.keys(AUTO_W).forEach(function (k) {
+            totalW += AUTO_W[k];
+            if (auto[k] !== null && auto[k] !== undefined) { possible += AUTO_W[k]; earned += auto[k]; }
+          });
+          ROUTER_ITEMS.forEach(function (it) {
+            totalW += it.w;
+            var a = manualAns[it.id];
+            if (a) { possible += it.w; if (a === 'ok') earned += it.w; }
+          });
+          SYMPTOMS.forEach(function (it) {
+            totalW += it.w;
+            var a = symAns[it.id];
+            if (a) { possible += it.w; if (a === 'no') earned += it.w; }
+          });
+          var coverage = totalW ? possible / totalW : 0;
+          var score = possible ? Math.round(earned / possible * 100) : null;
+          var critHit = SYMPTOMS.some(function (it) { return it.crit && symAns[it.id] === 'yes'; });
+          var anyYes = SYMPTOMS.some(function (it) { return symAns[it.id] === 'yes'; });
+          return { score: score, coverage: coverage, critHit: critHit, anyYes: anyYes };
+        }
+
+        function updateScore() {
+          var r = compute();
+          var arc = $('gaugeArc'), CIRC = 238.8;
+          var word = $('verdictWord'), text = $('verdictText'), sub = $('verdictSub');
+          var banner = $('alertBanner');
+          word.classList.remove('ok', 'warn', 'bad');
+          banner.classList.remove('show'); banner.innerHTML = '';
+
+          if (r.critHit) {
+            word.classList.add('bad');
+            text.textContent = '要対応：踏み台にされている疑いがあります';
+            sub.textContent = '重大な兆候に「はい」がありました。スコアにかかわらず、下の「やることリスト」と「踏み台が強く疑われるとき」の手順に沿って対処してください。';
+            banner.innerHTML = '<b>警告：</b>見覚えのない端末・設定の書き換え・外部からの指摘のいずれかがあります。まず疑わしい端末の切断と、ルーター管理パスワード／Wi-Fiパスワードの変更を行ってください。';
+            banner.classList.add('show');
+          } else if (r.coverage < 0.35) {
+            text.textContent = '点検が終わっていません';
+            sub.textContent = '自動チェックの結果は出ていますが、ルーター設定と兆候の点検が進んでいません。下の2つの点検に答えると総合判定が出ます。';
+          } else if (r.score >= 85 && !r.anyYes) {
+            word.classList.add('ok');
+            text.textContent = '良好：目立った異常は見当たりません';
+            sub.textContent = '自動チェックと点検の範囲では、乗っ取りや踏み台の兆候は見当たりません。この状態を保つため、ファームウェア更新とパスワード管理を続けてください。';
+          } else if (r.score >= 65) {
+            word.classList.add('warn');
+            text.textContent = '注意：気になる点があります';
+            sub.textContent = '大きな異常ではないものの、直したほうがいい点や兆候があります。下の「やることリスト」を確認してください。';
+          } else {
+            word.classList.add('bad');
+            text.textContent = '要対応：弱点が見つかりました';
+            sub.textContent = 'このままでは乗っ取りや踏み台にされる危険が高めです。下の「やることリスト」の上から順に対処してください。';
+          }
+
+          if (r.coverage >= 0.35 && r.score !== null) {
+            $('scoreNum').textContent = r.score;
+            arc.style.strokeDashoffset = String(CIRC * (1 - r.score / 100));
+            arc.style.stroke = r.critHit || r.score < 65 ? 'var(--red)' : (r.score < 85 ? 'var(--amber)' : 'var(--green-mid)');
+          } else {
+            $('scoreNum').textContent = '–';
+            arc.style.strokeDashoffset = String(CIRC * (1 - r.coverage));
+            arc.style.stroke = 'var(--ink-3)';
+          }
+          $('coverageBar').style.width = Math.round(r.coverage * 100) + '%';
+          $('coverageText').textContent = '点検の進み具合：' + Math.round(r.coverage * 100) + '%（自動チェック＋全' + (ROUTER_ITEMS.length + SYMPTOMS.length) + '項目の点検）';
+          renderActions(r);
+        }
+
+        function renderActions(r) {
+          var ol = $('actionList'); ol.innerHTML = '';
+          var items = [];
+          SYMPTOMS.forEach(function (it) {
+            if (symAns[it.id] === 'yes') items.push({ t: it.act, d: it.actD, urgent: it.crit });
+          });
+          ROUTER_ITEMS.forEach(function (it) {
+            var a = manualAns[it.id];
+            if (a === 'bad') items.push({ t: it.act, d: it.actD, urgent: it.w >= 8 });
+            else if (a === 'unknown') items.push({ t: it.act.replace(/する$/, 'か確認する'), d: it.why, urgent: false });
+          });
+          if (auto.https === 0) items.push({ t: '暗号化されていない接続では重要な操作をしない', d: 'このページがHTTPで開かれています。公共Wi-Fi等では特に注意してください。', urgent: false });
+          if (auto.rtc !== null && auto.rtc <= 2) items.push({ t: 'WebRTCで公開IPが直接見えている状態を確認する', d: 'VPN利用時などは意図した動作の場合もあります。心当たりがなければブラウザ設定を確認してください。', urgent: false });
+          items.sort(function (a, b) { return (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0); });
+          $('actionEmpty').style.display = items.length ? 'none' : 'block';
+          if (!items.length && r.coverage >= 0.35) {
+            $('actionEmpty').textContent = 'いまのところ、対応が必要な項目はありません。';
+          } else if (!items.length) {
+            $('actionEmpty').textContent = '点検に答えると、ここに表示されます。';
+          }
+          items.forEach(function (a) {
+            var li = document.createElement('li');
+            if (a.urgent) li.className = 'urgent';
+            var box = document.createElement('div');
+            var b = document.createElement('b'); b.textContent = a.t;
+            var s = document.createElement('span'); s.textContent = a.d;
+            box.appendChild(b); box.appendChild(s); li.appendChild(box); ol.appendChild(li);
+          });
+        }
+
+        /* ---------------- pill helper ---------------- */
+        function setPill(id, cls, label) {
+          var p = $(id); p.className = 'pill ' + cls; p.textContent = label;
+        }
+
+        /* ---------------- diagnostics ---------------- */
+        function checkHttps() {
+          var secure = window.isSecureContext && location.protocol === 'https:';
+          if (secure) {
+            setPill('pillHttps', 'ok', '暗号化あり');
+            $('valHttps').innerHTML = 'HTTPS <small>で接続中</small>';
+            auto.https = AUTO_W.https;
+          } else if (location.protocol === 'https:') {
+            setPill('pillHttps', 'ok', '暗号化あり');
+            $('valHttps').innerHTML = 'HTTPS <small>で接続中</small>';
+            auto.https = AUTO_W.https;
+          } else {
+            setPill('pillHttps', 'bad', '暗号化なし');
+            $('valHttps').innerHTML = 'HTTP <small>暗号化されていません</small>';
+            auto.https = 0;
+          }
+        }
+
+        function median(arr) {
+          var s = arr.slice().sort(function (a, b) { return a - b; });
+          return s[Math.floor(s.length / 2)];
+        }
+
+        function checkPing() {
+          var times = [], fails = 0, done = 0;
+          var N = 5;
+          function one(i) {
+            var t0 = performance.now();
+            fetch('https://www.gstatic.com/generate_204?cb=' + Date.now() + '-' + i, { mode: 'no-cors', cache: 'no-store' })
+              .then(function () { times.push(performance.now() - t0); })
+              .catch(function () { fails++; })
+              .then(function () {
+                done++;
+                if (done < N) { one(done); } else { finish(); }
+              });
+          }
+          function finish() {
+            if (!times.length) {
+              setPill('pillPing', 'warn', '計測できませんでした');
+              $('valPing').innerHTML = '— <small>（通信が遮断されている可能性があります）</small>';
+              auto.ping = null;
+            } else {
+              var med = Math.round(median(times));
+              var spread = Math.round(Math.max.apply(null, times) - Math.min.apply(null, times));
+              $('valPing').innerHTML = med + ' ms <small>（ばらつき ' + spread + ' ms / ' + times.length + '回成功）</small>';
+              if (fails > 0) { setPill('pillPing', 'warn', '一部失敗あり'); auto.ping = 4; }
+              else if (med <= 120) { setPill('pillPing', 'ok', '安定しています'); auto.ping = 10; }
+              else if (med <= 300) { setPill('pillPing', 'ok', '通常の範囲'); auto.ping = 7; }
+              else if (med <= 600) { setPill('pillPing', 'warn', 'やや遅め'); auto.ping = 4; }
+              else { setPill('pillPing', 'warn', 'かなり遅い'); auto.ping = 1; }
+            }
+            updateScore();
+          }
+          one(0);
+        }
+
+        function checkSpeed() {
+          var bytes = 1000000;
+          var t0 = performance.now();
+          fetch('https://speed.cloudflare.com/__down?bytes=' + bytes + '&cb=' + Date.now(), { cache: 'no-store' })
+            .then(function (res) {
+              if (!res.ok || !res.body) throw new Error('bad');
+              var reader = res.body.getReader(); var got = 0;
+              function pump() {
+                return reader.read().then(function (r) {
+                  if (r.done) return got;
+                  got += r.value.byteLength; return pump();
+                });
+              }
+              return pump();
+            })
+            .then(function (got) {
+              var sec = (performance.now() - t0) / 1000;
+              var mbps = got * 8 / sec / 1000000;
+              $('valSpeed').innerHTML = mbps.toFixed(1) + ' Mbps <small>（' + (got / 1000000).toFixed(1) + 'MBを ' + sec.toFixed(1) + '秒で受信）</small>';
+              if (mbps >= 30) setPill('pillSpeed', 'ok', '十分な速さ');
+              else if (mbps >= 5) setPill('pillSpeed', 'info', '通常利用は可能');
+              else setPill('pillSpeed', 'warn', '遅めです');
+            })
+            .catch(function () {
+              setPill('pillSpeed', 'warn', '計測できませんでした');
+              $('valSpeed').innerHTML = '— <small>（時間をおいて再チェックしてください）</small>';
+            });
+        }
+
+        var publicIp = null;
+        function checkIp() {
+          fetch('https://ipapi.co/json/', { cache: 'no-store' })
+            .then(function (r) { if (!r.ok) throw new Error('bad'); return r.json(); })
+            .then(function (d) {
+              if (!d || !d.ip) throw new Error('bad');
+              publicIp = d.ip;
+              $('dIp').textContent = d.ip;
+              $('dIpVer').textContent = d.version ? d.version + ' で接続しています' : '';
+              $('dIsp').textContent = d.org || '取得できませんでした';
+              var geo = [d.city, d.region, d.country_name].filter(Boolean).join(' / ');
+              $('dGeo').firstChild.textContent = geo || '取得できませんでした';
+              judgeRtc();
+            })
+            .catch(function () {
+              return fetch('https://ipwho.is/', { cache: 'no-store' })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                  if (!d || !d.success) throw new Error('bad');
+                  publicIp = d.ip;
+                  $('dIp').textContent = d.ip;
+                  $('dIpVer').textContent = d.type ? d.type + ' で接続しています' : '';
+                  $('dIsp').textContent = (d.connection && d.connection.isp) || '取得できませんでした';
+                  $('dGeo').firstChild.textContent = [d.city, d.region, d.country].filter(Boolean).join(' / ');
+                  judgeRtc();
+                })
+                .catch(function () {
+                  $('dIp').textContent = '取得できませんでした';
+                  $('dIsp').textContent = '取得できませんでした';
+                  $('dGeo').firstChild.textContent = '取得できませんでした';
+                });
+            });
+        }
+
+        function checkDns() {
+          fetch('https://edns.ip-api.com/json', { cache: 'no-store' })
+            .then(function (r) { if (!r.ok) throw new Error('bad'); return r.json(); })
+            .then(function (d) {
+              if (d && d.dns && d.dns.ip) {
+                $('dDns').textContent = d.dns.ip;
+                $('dDnsGeo').textContent = d.dns.geo ? '場所の目安：' + d.dns.geo + '。見覚えのない国のDNSは要注意です。' : '';
+              } else { throw new Error('bad'); }
+            })
+            .catch(function () {
+              $('dDns').textContent = '取得できませんでした';
+              $('dDnsGeo').textContent = 'DNSの乗っ取り有無までは、この方法では判定できません。';
+            });
+        }
+
+        var rtcResult = { state: 'pending', ips: [] };
+        function checkRtc() {
+          rtcResult = { state: 'pending', ips: [] };
+          var done = false;
+          function finish() {
+            if (done) return; done = true;
+            if (rtcResult.state === 'masked') {
+              setPill('pillRtc', 'ok', '隠れています');
+              $('valRtc').textContent = 'ローカルIPは仮名（mDNS）で隠れています';
+              $('dLocal').textContent = 'ブラウザからは隠されています（正常です）';
+              auto.rtc = 10;
+            } else if (rtcResult.ips.length) {
+              $('dLocal').textContent = rtcResult.ips.join(' , ');
+              judgeRtc();
+            } else {
+              setPill('pillRtc', 'info', '取得できませんでした');
+              $('valRtc').textContent = 'このブラウザではWebRTC情報を取得できませんでした';
+              $('dLocal').textContent = '取得できませんでした';
+              auto.rtc = null;
+            }
+            updateScore();
+          }
+          try {
+            var pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+            pc.createDataChannel('x');
+            pc.onicecandidate = function (e) {
+              if (!e.candidate) { finish(); return; }
+              var c = e.candidate.candidate || '';
+              if (c.indexOf('.local') !== -1) { rtcResult.state = 'masked'; return; }
+              var m = c.match(/(\d{1,3}\.){3}\d{1,3}/);
+              if (m && rtcResult.ips.indexOf(m[0]) === -1) rtcResult.ips.push(m[0]);
+            };
+            pc.createOffer().then(function (o) { return pc.setLocalDescription(o); }).catch(function () { finish(); });
+            setTimeout(finish, 4000);
+          } catch (err) { finish(); }
+        }
+        function judgeRtc() {
+          if (!rtcResult.ips.length || rtcResult.state === 'masked') return;
+          var hasPublic = publicIp && rtcResult.ips.indexOf(publicIp) !== -1;
+          var allPrivate = rtcResult.ips.every(function (ip) {
+            return /^192\.168\./.test(ip) || /^10\./.test(ip) || /^172\.(1[6-9]|2\d|3[01])\./.test(ip);
+          });
+          if (hasPublic) {
+            setPill('pillRtc', 'bad', '公開IPが見えています');
+            $('valRtc').textContent = 'WebRTC経由で公開IPがそのまま見えています';
+            auto.rtc = 2;
+          } else if (allPrivate) {
+            setPill('pillRtc', 'warn', '家庭内IPが見えます');
+            $('valRtc').textContent = '家庭内IP（' + rtcResult.ips[0] + '）がサイト側に見える設定です。家庭外へは通常出ませんが、隠す設定のブラウザもあります';
+            auto.rtc = 6;
+          } else {
+            setPill('pillRtc', 'warn', '一部のIPが見えます');
+            $('valRtc').textContent = rtcResult.ips.join(' , ');
+            auto.rtc = 5;
+          }
+          updateScore();
+        }
+
+        function checkConnApi() {
+          var c = navigator.connection;
+          if (c && (c.effectiveType || c.downlink)) {
+            var parts = [];
+            if (c.effectiveType) parts.push('種別目安：' + c.effectiveType.toUpperCase());
+            if (c.downlink) parts.push('推定帯域：約 ' + c.downlink + ' Mbps');
+            if (typeof c.rtt === 'number') parts.push('応答目安：' + c.rtt + ' ms');
+            $('dConn').firstChild.textContent = parts.join(' / ');
+          } else {
+            $('dConn').firstChild.textContent = 'このブラウザでは取得できません';
+          }
+        }
+
+        /* ---------------- run ---------------- */
+        function stamp() {
+          try {
+            $('checkedAt').textContent = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          } catch (e) {
+            $('checkedAt').textContent = new Date().toLocaleString('ja-JP');
+          }
+          $('onlineState').textContent = navigator.onLine ? 'オンライン' : 'オフライン';
+        }
+
+        function runAll() {
+          var btn = $('rerunBtn');
+          btn.disabled = true; btn.textContent = 'チェック中…';
+          setPill('pillPing', '', '計測中'); setPill('pillSpeed', '', '計測中'); setPill('pillRtc', '', '計測中');
+          stamp();
+          checkHttps(); checkConnApi();
+          checkPing(); checkSpeed(); checkIp(); checkDns(); checkRtc();
+          updateScore();
+          setTimeout(function () { btn.disabled = false; btn.textContent = '再チェックする'; }, 4500);
+        }
+
+        $('rerunBtn').addEventListener('click', runAll);
+        $('resetBtn').addEventListener('click', function () {
+          manualAns = {}; symAns = {};
+          ROUTER_ITEMS.forEach(function (it) { paintItem(it.id, 'router'); });
+          SYMPTOMS.forEach(function (it) { paintItem(it.id, 'sym'); });
+          updateScore();
+        });
+        window.addEventListener('online', stamp);
+        window.addEventListener('offline', stamp);
+
+        runAll();
+      })();
+    </script>
+  </body>
+</html>
