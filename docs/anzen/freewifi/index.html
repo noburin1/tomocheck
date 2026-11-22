@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外のフリーWi-Fiで使うとき</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d1512">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1512;
+    color: #e8f0ec;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.7;
+    padding: 24px 16px 40px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 {
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.45;
+    margin-bottom: 12px;
+  }
+  .lead {
+    font-size: 17px;
+    color: #d7e5dc;
+    margin-bottom: 24px;
+  }
+  h2 {
+    font-size: 21px;
+    font-weight: 800;
+    margin: 30px 0 12px;
+  }
+  .card {
+    background: #16241d;
+    border: 1px solid #2a4234;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card p { font-size: 16px; color: #d7e5dc; }
+  .card p + p { margin-top: 8px; }
+  .card h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #e8f0ec;
+    margin-bottom: 6px;
+  }
+  .card h3.mt { margin-top: 18px; }
+  .card ol { margin: 4px 0 0 22px; font-size: 16px; color: #d7e5dc; }
+  .card ol li { margin-bottom: 4px; }
+  .card ul { margin: 4px 0 0 22px; font-size: 16px; color: #d7e5dc; }
+  .card ul li { margin-bottom: 6px; }
+  .small { font-size: 14px; color: #8fa89b; }
+  .measure-btn {
+    display: block;
+    width: 100%;
+    background: #123528;
+    border: 1px solid #2a4234;
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: #7ddba8;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: inherit;
+    cursor: pointer;
+    margin-bottom: 18px;
+  }
+  .measure-btn:active { background: #1d3126; }
+  .measure-btn:disabled { opacity: 0.55; cursor: default; }
+  .result { margin-bottom: 18px; }
+  .result:last-child { margin-bottom: 0; }
+  .result .r-label { font-size: 15px; color: #b9cdc2; }
+  .result .r-value { font-size: 22px; font-weight: 800; color: #e8f0ec; line-height: 1.4; }
+  .result .r-word { font-size: 15px; font-weight: 700; }
+  .meter {
+    height: 12px;
+    background: #0a0f0c;
+    border: 1px solid #2a4234;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .meter .fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+  }
+  .fill.good { background: #3fbf72; }
+  .fill.mid { background: #e3c341; }
+  .fill.bad { background: #e05252; }
+  .r-word.good { color: #7ddba8; }
+  .r-word.mid { color: #e3c341; }
+  .r-word.bad { color: #ff9aa5; }
+  a.vpn-btn {
+    display: block;
+    margin-top: 18px;
+    background: #123528;
+    border: 1px solid #2a4234;
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: #e8f0ec;
+    font-size: 17px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+  }
+  a.vpn-btn:active { background: #1d3126; }
+  .note-card {
+    background: #0a0f0c;
+    border: 1px dashed #4a6b58;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .note-card .n-title { font-size: 17px; font-weight: 800; color: #e8f0ec; margin-bottom: 6px; }
+  .note-card p { font-size: 15px; color: #b9cdc2; }
+  a.back {
+    display: block;
+    margin-top: 20px;
+    background: #123528;
+    border: 1px solid #2a4234;
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: #7ddba8;
+    font-size: 17px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+  }
+  a.back:active { background: #1d3126; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>外のフリーWi-Fiで使うとき</h1>
+  <p class="lead">カフェや駅のフリーWi-Fiは、便利だけど「のぞき見」されやすい場所です。使う前に測って、VPNをつないでから使いましょう。</p>
+
+  <h2>いまの接続を測る</h2>
+  <div class="card">
+    <button class="measure-btn" id="measureBtn" type="button">測る</button>
+    <div class="result">
+      <div class="r-label">応答の速さ</div>
+      <div class="r-value" id="pingValue">まだ測っていません</div>
+      <div class="meter"><div class="fill" id="pingFill"></div></div>
+      <div class="r-word" id="pingWord"></div>
+    </div>
+    <div class="result">
+      <div class="r-label">ダウンロード速度</div>
+      <div class="r-value" id="downValue">まだ測っていません</div>
+      <div class="meter"><div class="fill" id="downFill"></div></div>
+      <div class="r-word" id="downWord"></div>
+    </div>
+    <div class="result">
+      <div class="r-label">接続先</div>
+      <div class="r-value" id="infoValue" style="font-size:18px">まだ測っていません</div>
+      <p class="small" style="margin-top:6px">VPNをつないだ後にもう一度測ると、ここの事業者が変わっているのが「効いている目安」です。</p>
+    </div>
+  </div>
+
+  <h2>VPNを先につなぐ</h2>
+  <div class="card">
+    <h3>iPhoneの手順</h3>
+    <ol>
+      <li>Proton VPNのアプリを開く</li>
+      <li>「接続」を押す</li>
+      <li>画面の上にVPNの表示が出たら、このページに戻って測り直す</li>
+    </ol>
+    <h3 class="mt">アンドロイドの手順</h3>
+    <ol>
+      <li>Proton VPNのアプリを開く</li>
+      <li>「接続」を押す</li>
+      <li>画面の上部にVPNの表示が出たら、このページに戻って測り直す</li>
+    </ol>
+    <a class="vpn-btn" href="https://protonvpn.com/" target="_blank" rel="noopener">Proton VPNのページを開く</a>
+    <p class="small" style="margin-top:10px">無料で使えます。アプリがまだ無い方はこちらから。</p>
+  </div>
+
+  <h2>使うときの注意</h2>
+  <div class="card">
+    <ul>
+      <li>銀行・買い物・大事なログインは、フリーWi-Fiではしない</li>
+      <li>Wi-Fiの自動接続は切っておく</li>
+      <li>使い終わったら「このネットワークを削除」する</li>
+      <li>名前が似ているだけの知らないWi-Fiにつながない</li>
+      <li>パスワードを入れさせるログイン画面が出たら、いったん閉じて確かめる</li>
+    </ul>
+  </div>
+
+  <div class="note-card">
+    <div class="n-title">電波の強さについて</div>
+    <p>このページでは、電波の強さそのものは測れません（スマホの仕組みで決まっています）。電波の強さは、スマホのWi-Fi画面に出る扇マークで見てください。ここで測れるのは「速さ」です。</p>
+  </div>
+
+  <a class="back" href="../">スマホ安全チェックに戻る</a>
+</div>
+<script>
+(function () {
+  var btn = document.getElementById('measureBtn');
+  if (!btn) return;
+
+  function setMeter(fillEl, wordEl, level, pct, word) {
+    fillEl.className = 'fill ' + level;
+    fillEl.style.width = pct + '%';
+    wordEl.className = 'r-word ' + level;
+    wordEl.textContent = word;
+  }
+
+  function measurePing() {
+    var times = [];
+    var chain = Promise.resolve();
+    for (var i = 0; i < 3; i++) {
+      (function () {
+        chain = chain.then(function () {
+          var start = performance.now();
+          return fetch('../icon-180.png?ping=' + Date.now() + '-' + Math.random(), { cache: 'no-store' })
+            .then(function (res) {
+              if (!res.ok) throw new Error('bad response');
+              return res.blob();
+            })
+            .then(function () {
+              times.push(performance.now() - start);
+            });
+        });
+      })();
+    }
+    return chain.then(function () {
+      if (!times.length) throw new Error('no samples');
+      var sum = 0;
+      for (var j = 0; j < times.length; j++) sum += times[j];
+      return sum / times.length;
+    });
+  }
+
+  function measureDownload() {
+    var bytes = 2000000;
+    var start = performance.now();
+    return fetch('https://speed.cloudflare.com/__down?bytes=' + bytes + '&r=' + Math.random(), { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('bad response');
+        return res.arrayBuffer();
+      })
+      .then(function (buf) {
+        var sec = (performance.now() - start) / 1000;
+        if (sec <= 0) throw new Error('bad timing');
+        return (buf.byteLength * 8) / sec / 1000000;
+      });
+  }
+
+  function measureInfo() {
+    return fetch('https://ipapi.co/json/')
+      .then(function (res) {
+        if (!res.ok) throw new Error('bad response');
+        return res.json();
+      });
+  }
+
+  var running = false;
+  btn.addEventListener('click', function () {
+    if (running) return;
+    running = true;
+    btn.disabled = true;
+    btn.textContent = '測っています…';
+
+    var pingValue = document.getElementById('pingValue');
+    var pingFill = document.getElementById('pingFill');
+    var pingWord = document.getElementById('pingWord');
+    var downValue = document.getElementById('downValue');
+    var downFill = document.getElementById('downFill');
+    var downWord = document.getElementById('downWord');
+    var infoValue = document.getElementById('infoValue');
+
+    pingValue.textContent = '測定中…';
+    downValue.textContent = '測定中…';
+    infoValue.textContent = '測定中…';
+
+    var pPing = measurePing().then(function (ms) {
+      var rounded = Math.round(ms);
+      pingValue.textContent = '約 ' + rounded + ' ミリ秒';
+      if (ms < 100) {
+        setMeter(pingFill, pingWord, 'good', 90, '速いです');
+      } else if (ms < 300) {
+        setMeter(pingFill, pingWord, 'mid', 55, '普通です');
+      } else {
+        setMeter(pingFill, pingWord, 'bad', 25, '遅めです');
+      }
+    }).catch(function () {
+      pingValue.textContent = '取得できませんでした';
+      pingFill.style.width = '0%';
+      pingWord.textContent = '';
+    });
+
+    var pDown = measureDownload().then(function (mbps) {
+      downValue.textContent = '約 ' + mbps.toFixed(1) + ' Mbps';
+      if (mbps >= 20) {
+        setMeter(downFill, downWord, 'good', 90, '速いです');
+      } else if (mbps >= 5) {
+        setMeter(downFill, downWord, 'mid', 55, '普通です');
+      } else {
+        setMeter(downFill, downWord, 'bad', 25, '遅めです');
+      }
+    }).catch(function () {
+      downValue.textContent = '取得できませんでした';
+      downFill.style.width = '0%';
+      downWord.textContent = '';
+    });
+
+    var pInfo = measureInfo().then(function (d) {
+      var parts = [];
+      if (d.org) parts.push(d.org);
+      var place = [];
+      if (d.city) place.push(d.city);
+      if (d.region) place.push(d.region);
+      if (place.length) parts.push(place.join('・'));
+      if (d.ip) parts.push(d.ip);
+      infoValue.textContent = parts.length ? parts.join(' ／ ') : '取得できませんでした';
+    }).catch(function () {
+      infoValue.textContent = '取得できませんでした';
+    });
+
+    Promise.all([pPing, pDown, pInfo]).then(function () {
+      running = false;
+      btn.disabled = false;
+      btn.textContent = 'もう一度測る';
+    });
+  });
+})();
+</script>
+</body>
+</html>
