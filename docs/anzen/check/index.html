@@ -197,7 +197,6 @@ code.file{background:var(--bg2);border:1px solid var(--line);padding:1px 7px;bor
         <button class="chip" aria-pressed="false" data-w="2">🔊 警告音や声が鳴り続ける</button>
         <button class="chip" aria-pressed="false" data-w="2">⏰ カウントダウンで急がされる</button>
         <button class="chip" aria-pressed="false" data-w="2">🔒 画面が全画面で、閉じられない</button>
-        <button class="chip" aria-pressed="false" data-w="1">🏢 Microsoft / Windows のロゴがある</button>
         <button class="chip" aria-pressed="false" data-w="1">✍️ 日本語が少し変・カタコトっぽい</button>
         <button class="chip" aria-pressed="false" data-w="1">🦠 「ウイルス○件検出」と出ている</button>
         <button class="chip" aria-pressed="false" data-w="1">🌐 心当たりのないサイトで急に出た</button>
@@ -224,7 +223,7 @@ code.file{background:var(--bg2);border:1px solid var(--line);padding:1px 7px;bor
         <h3>✅ やって大丈夫なこと</h3>
         <ul>
           <li>ブラウザを<strong>そのまま閉じる</strong>（下に手順あり）</li>
-          <li>パソコンを再起動する</li>
+          <li>スマホを再起動する</li>
           <li>家族や、近くの修理屋さんに画面の写真を見せる</li>
           <li>閉じたあと、いつも通り使えているか様子を見る</li>
           <li>もし電話してしまったら、警察相談 <strong>#9110</strong> へ</li>
@@ -234,52 +233,30 @@ code.file{background:var(--bg2);border:1px solid var(--line);padding:1px 7px;bor
 
     <div class="card">
       <h3>画面の消し方（閉じられないとき）</h3>
-      <div class="tabs" role="tablist" aria-label="お使いの機械">
-        <button class="tab active" data-tab="win">Windows</button>
-        <button class="tab" data-tab="mac">Mac</button>
-        <button class="tab" data-tab="phone">スマホ・タブレット</button>
-      </div>
-      <div class="close-panel active" id="panel-win">
-        <ol>
-          <li>まず <kbd>Esc</kbd> キーを長押ししてみてください。全画面が解除されることがあります。</li>
-          <li>ダメなら <kbd>Alt</kbd> + <kbd>F4</kbd> を押して、ブラウザを閉じます。</li>
-          <li>それでもダメなら <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd> で「タスクマネージャー」を開き、使っているブラウザ（Edge / Chrome など）を選んで「タスクの終了」を押します。</li>
-          <li>何も効かないときは、電源ボタンを長押しして切っても大丈夫です。大事な作業中のファイルは消えることがあるので、これは最後の手段にしてください。</li>
-          <li>再起動後、ブラウザを開いて「前回のページを復元しますか？」と出たら、<strong>復元しない</strong>を選んでください。</li>
-        </ol>
-      </div>
-      <div class="close-panel" id="panel-mac">
-        <ol>
-          <li><kbd>Esc</kbd> キーを長押しして、全画面を解除してみてください。</li>
-          <li><kbd>Command</kbd> + <kbd>Q</kbd> でブラウザを終了します。</li>
-          <li>ダメなら <kbd>Option</kbd> + <kbd>Command</kbd> + <kbd>Esc</kbd> で「強制終了」画面を開き、ブラウザを選んで「強制終了」。</li>
-          <li>再び開いたときに「ページを復元」と出たら、復元しないでください。</li>
-        </ol>
-      </div>
-      <div class="close-panel" id="panel-phone">
+      <div class="close-panel active" id="panel-phone">
         <ol>
           <li>ブラウザのタブ一覧を開いて、そのページのタブだけを閉じます。</li>
           <li>閉じられないときは、アプリ切り替え画面からブラウザを上（または横）にスワイプして終了します。</li>
           <li>「ウイルスが検出されました」と出ても、スマホの設定や公式ストア以外からアプリを入れないでください。</li>
         </ol>
       </div>
-      <p class="note">※ 画面を消せたあと、パソコンがいつも通り動いていれば、実際にウイルスに入られた可能性は低いです。詐欺画面の多くは「ブラウザに映った絵」だけだからです。</p>
+      <p class="note">※ 画面を消せたあと、スマホがいつも通り動いていれば、実際にウイルスに入られた可能性は低いです。詐欺画面の多くは「ブラウザに映った絵」だけだからです。</p>
     </div>
 
     <h3 style="margin:26px 0 6px;font-size:21px">よくあるニセ画面の例</h3>
     <p class="note" style="margin-top:0">本物そっくりに作られています。見分けのコツは「あおって、電話かお金に誘導すること」です。</p>
     <div class="examples">
       <article class="fake">
-        <div class="fake-screen red"><div class="fs-title">⚠️ ウイルスに感染しました！</div><div class="fs-body">あなたのパソコンは3つのウイルスに感染しています。今すぐ対処しないとデータが消えます。残り時間 04:59</div><span class="fs-phone">☎ 050-XXXX-XXXX に今すぐ電話</span></div>
-        <div class="fake-caption"><strong>型1：感染警告＋電話型</strong><ul><li>カウントダウンで焦らせる</li><li>電話番号がやたら大きい</li><li>警告音が鳴ることが多い</li></ul></div>
+        <div class="fake-screen blue"><div class="fs-title">お荷物のお届けについて</div><div class="fs-body">お荷物のお届けに上がりましたが不在でした。再配達の手続きはこちらから。</div><span class="fs-phone" style="color:#1e3a8a">再配達はこちら</span></div>
+        <div class="fake-caption"><strong>型1：宅配の不在通知型</strong><ul><li>心当たりのない不在通知</li><li>リンクを押させる</li><li>本物かどうかは公式アプリで確認</li></ul></div>
       </article>
       <article class="fake">
-        <div class="fake-screen blue"><div class="fs-title">Windows セキュリティ警告</div><div class="fs-body">不審なアクセスを検出したため、このパソコンをロックしました。Microsoft サポートへ連絡してください。</div><span class="fs-phone" style="color:#1e3a8a">サポート窓口はこちら</span></div>
-        <div class="fake-caption"><strong>型2：メーカーなりすまし型</strong><ul><li>ロゴや色が本物そっくり</li><li>でも連絡先は公式サイトに載っていない番号</li><li>「ロックした」と脅す</li></ul></div>
+        <div class="fake-screen dark"><div class="fs-title">Apple ID に関する重要なお知らせ</div><div class="fs-body">Apple IDがロックされます。24時間以内に本人確認をしてください。</div><span class="fs-phone" style="color:#111827">本人確認をする</span></div>
+        <div class="fake-caption"><strong>型2：アカウント停止を装う型</strong><ul><li>焦らせてIDとパスワードを入力させる</li><li>確認は設定アプリを自分で開いて</li><li>メールやメッセージのリンクからは入らない</li></ul></div>
       </article>
       <article class="fake">
-        <div class="fake-screen dark"><div class="fs-title">お支払いが完了していません</div><div class="fs-body">動画サイトの未納料金があります。今日中にプリペイドカードでお支払いください。</div><span class="fs-phone" style="color:#111827">カードの番号を入力</span></div>
-        <div class="fake-caption"><strong>型3：料金請求型</strong><ul><li>心当たりのない請求</li><li>コンビニのカードで払わせる</li><li>「今日中」と期限で急がせる</li></ul></div>
+        <div class="fake-screen red"><div class="fs-title">【銀行】重要なお知らせ</div><div class="fs-body">お取引を停止しました。確認のため、こちらへアクセスしてください。</div><span class="fs-phone">アクセスして確認</span></div>
+        <div class="fake-caption"><strong>型3：キャリア・銀行を装う型</strong><ul><li>SMSのリンクは押さない</li><li>公式アプリで確認する</li><li>電話するなら自分で調べた番号へ</li></ul></div>
       </article>
     </div>
   </section>
@@ -362,16 +339,6 @@ function updateVerdict(){
   else { vTitle.textContent='🚨 ほぼ詐欺です。今すぐ画面を閉じてください'; vBody.innerHTML='特徴が何個も重なっています。これは本物の警告の出方ではありません。<strong>絶対に電話せず、遠隔操作ソフトも入れないでください。</strong>下の手順でブラウザを閉じましょう。もし既に電話したり操作を許したりした場合は、警察相談ダイヤル <strong>#9110</strong> と、使っている銀行・カード会社へ連絡してください。'; }
 }
 chips.forEach(function(c){ c.addEventListener('click', function(){ var on=c.getAttribute('aria-pressed')==='true'; c.setAttribute('aria-pressed', on?'false':'true'); updateVerdict(); }); });
-
-// ---------- 画面の消し方タブ ----------
-document.querySelectorAll('.tab').forEach(function(t){
-  t.addEventListener('click', function(){
-    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
-    t.classList.add('active');
-    document.querySelectorAll('.close-panel').forEach(function(p){p.classList.remove('active')});
-    document.getElementById('panel-'+t.dataset.tab).classList.add('active');
-  });
-});
 </script>
 </body>
 </html>
