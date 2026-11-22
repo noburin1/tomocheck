@@ -95,6 +95,70 @@
   .r-word.good { color: #7ddba8; }
   .r-word.mid { color: #e3c341; }
   .r-word.bad { color: #ff9aa5; }
+  .verdict {
+    display: none;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.55;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 4px;
+  }
+  .verdict.good {
+    display: block;
+    background: #123528;
+    border: 1px solid #3fbf72;
+    color: #7ddba8;
+  }
+  .verdict.warn {
+    display: block;
+    background: #33300f;
+    border: 1px solid #e3c341;
+    color: #e3c341;
+  }
+  .verdict.none {
+    display: block;
+    background: #0a0f0c;
+    border: 1px solid #2a4234;
+    color: #b9cdc2;
+  }
+  .honest {
+    border: 1px dashed #4a6b58;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-top: 16px;
+  }
+  .honest p { font-size: 14px; color: #b9cdc2; }
+  .speed-num { font-size: 18px; font-weight: 800; color: #e8f0ec; line-height: 1.3; }
+  .speed-num.big { font-size: 34px; }
+  .speed-num .unit { font-size: 17px; font-weight: 700; color: #b9cdc2; }
+  .gauge {
+    position: relative;
+    height: 14px;
+    border-radius: 7px;
+    background: linear-gradient(to right, #e05252, #e8912d, #e3c341, #3fbf72);
+    margin-top: 8px;
+  }
+  .gauge-marker {
+    position: absolute;
+    top: -4px;
+    left: 0%;
+    width: 5px;
+    height: 22px;
+    background: #ffffff;
+    border-radius: 3px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+    transform: translateX(-50%);
+    transition: left 0.5s ease;
+    display: none;
+  }
+  .gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #8fa89b;
+    margin-top: 4px;
+  }
   a.vpn-btn {
     display: block;
     margin-top: 18px;
@@ -139,6 +203,35 @@
   <h1>外のフリーWi-Fiで使うとき</h1>
   <p class="lead">カフェや駅のフリーWi-Fiは、便利だけど「のぞき見」されやすい場所です。使う前に測って、VPNをつないでから使いましょう。</p>
 
+  <h2>いまつながっているWi-Fi</h2>
+  <div class="card">
+    <button class="measure-btn" id="checkBtn" type="button">調べる</button>
+    <div class="result">
+      <div class="r-label">事業者</div>
+      <div class="r-value" id="orgValue" style="font-size:18px">まだ調べていません</div>
+    </div>
+    <div class="result">
+      <div class="r-label">地域</div>
+      <div class="r-value" id="areaValue" style="font-size:18px">まだ調べていません</div>
+    </div>
+    <div class="result">
+      <div class="r-label">公開IP</div>
+      <div class="r-value" id="ipValue" style="font-size:18px">まだ調べていません</div>
+    </div>
+    <div class="result">
+      <div class="r-label">回線の種類（推定）</div>
+      <div class="r-value" id="lineValue" style="font-size:18px">まだ調べていません</div>
+    </div>
+    <div class="result">
+      <div class="r-label">WebRTCチェック</div>
+      <div class="r-value" id="rtcValue" style="font-size:18px">まだ調べていません</div>
+    </div>
+    <div class="verdict" id="verdictLine"></div>
+    <div class="honest">
+      <p>このページでは分からないこと：Wi-Fiの暗号化の種類（WPA2など）とネットワーク名は、ページの仕組みでは読めません。暗号化は、スマホのWi-Fi画面でネットワーク名の横に鍵マークがあるかで確かめてください。鍵が無い回線は、誰でも入れる回線です。</p>
+    </div>
+  </div>
+
   <h2>いまの接続を測る</h2>
   <div class="card">
     <button class="measure-btn" id="measureBtn" type="button">測る</button>
@@ -149,15 +242,17 @@
       <div class="r-word" id="pingWord"></div>
     </div>
     <div class="result">
-      <div class="r-label">ダウンロード速度</div>
-      <div class="r-value" id="downValue">まだ測っていません</div>
-      <div class="meter"><div class="fill" id="downFill"></div></div>
-      <div class="r-word" id="downWord"></div>
+      <div class="r-label">Down（ダウンロード）</div>
+      <div class="speed-num" id="downValue">まだ測っていません</div>
     </div>
     <div class="result">
-      <div class="r-label">接続先</div>
-      <div class="r-value" id="infoValue" style="font-size:18px">まだ測っていません</div>
-      <p class="small" style="margin-top:6px">VPNをつないだ後にもう一度測ると、ここの事業者が変わっているのが「効いている目安」です。</p>
+      <div class="r-label">Up（アップロード）</div>
+      <div class="speed-num" id="upValue">まだ測っていません</div>
+    </div>
+    <div class="result">
+      <div class="gauge"><div class="gauge-marker" id="gaugeMarker"></div></div>
+      <div class="gauge-labels"><span>遅い</span><span>快適</span></div>
+      <div class="r-word" id="speedWord" style="margin-top:6px"></div>
     </div>
   </div>
 
@@ -199,6 +294,151 @@
 </div>
 <script>
 (function () {
+  // ---------- カード1：いまつながっているWi-Fi ----------
+  var checkBtn = document.getElementById('checkBtn');
+
+  function containsAny(text, words) {
+    var t = (text || '').toLowerCase();
+    for (var i = 0; i < words.length; i++) {
+      if (t.indexOf(words[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function classifyLine(org) {
+    var vpnWords = ['proton', 'nord', 'expressvpn', 'surfshark', 'mullvad', 'ivpn',
+      'datacamp', 'm247', 'choopa', 'digitalocean', 'amazon', 'google llc',
+      'ovh', 'hetzner', 'vultr', 'linode'];
+    var carrierWords = ['softbank', 'kddi', 'docomo', 'rakuten'];
+    var freeWifiWords = ['usen', 'wi2', 'wire and wireless', 'nttbp', 'freespot'];
+    if (containsAny(org, vpnWords)) {
+      return { key: 'vpn', text: 'VPNを通っている可能性が高いです' };
+    }
+    if (containsAny(org, carrierWords)) {
+      return { key: 'carrier', text: '携帯の回線のようです' };
+    }
+    if (containsAny(org, freeWifiWords)) {
+      return { key: 'freewifi', text: 'お店・公共のフリーWi-Fiのようです' };
+    }
+    return { key: 'fixed', text: '自宅や会社などの固定回線のようです（事業者名からの推定です）' };
+  }
+
+  function checkWebRTC() {
+    return new Promise(function (resolve) {
+      if (typeof RTCPeerConnection === 'undefined') { resolve('unknown'); return; }
+      var pc;
+      try {
+        pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+      } catch (e) { resolve('unknown'); return; }
+      var done = false;
+      var sawCandidate = false;
+      var foundPrivate = false;
+      function finish() {
+        if (done) return;
+        done = true;
+        try { pc.close(); } catch (e) {}
+        if (foundPrivate) resolve('leak');
+        else if (sawCandidate) resolve('none');
+        else resolve('unknown');
+      }
+      pc.onicecandidate = function (ev) {
+        if (!ev.candidate) { finish(); return; }
+        sawCandidate = true;
+        var c = ev.candidate.candidate || '';
+        var m = c.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
+        if (m) {
+          var ip = m[1];
+          if (/^192\.168\./.test(ip) || /^10\./.test(ip) || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip)) {
+            foundPrivate = true;
+            finish();
+          }
+        }
+      };
+      try {
+        pc.createDataChannel('check');
+        pc.createOffer().then(function (offer) {
+          return pc.setLocalDescription(offer);
+        }).catch(function () { finish(); });
+      } catch (e) { finish(); return; }
+      setTimeout(finish, 4000);
+    });
+  }
+
+  if (checkBtn) {
+    var checking = false;
+    checkBtn.addEventListener('click', function () {
+      if (checking) return;
+      checking = true;
+      checkBtn.disabled = true;
+      checkBtn.textContent = '調べています…';
+
+      var orgValue = document.getElementById('orgValue');
+      var areaValue = document.getElementById('areaValue');
+      var ipValue = document.getElementById('ipValue');
+      var lineValue = document.getElementById('lineValue');
+      var rtcValue = document.getElementById('rtcValue');
+      var verdictLine = document.getElementById('verdictLine');
+
+      orgValue.textContent = '調べています…';
+      areaValue.textContent = '調べています…';
+      ipValue.textContent = '調べています…';
+      lineValue.textContent = '調べています…';
+      rtcValue.textContent = '調べています…';
+      verdictLine.className = 'verdict';
+      verdictLine.textContent = '';
+
+      var pInfo = fetch('https://ipapi.co/json/')
+        .then(function (res) {
+          if (!res.ok) throw new Error('bad response');
+          return res.json();
+        })
+        .then(function (d) {
+          orgValue.textContent = d.org ? d.org : '取得できませんでした';
+          var place = [];
+          if (d.city) place.push(d.city);
+          if (d.region) place.push(d.region);
+          areaValue.textContent = place.length ? place.join(' ／ ') : '取得できませんでした';
+          ipValue.textContent = d.ip ? d.ip : '取得できませんでした';
+          var line = classifyLine(d.org || '');
+          lineValue.textContent = line.text + '（あくまで目安です）';
+          if (line.key === 'vpn') {
+            verdictLine.className = 'verdict good';
+            verdictLine.textContent = 'VPNで守られているようです。このまま使えます';
+          } else {
+            verdictLine.className = 'verdict warn';
+            verdictLine.textContent = '暗号化されていない場所では、のぞき見されることがあります。先にVPNをつなぐのがおすすめです';
+          }
+        })
+        .catch(function () {
+          orgValue.textContent = '取得できませんでした';
+          areaValue.textContent = '取得できませんでした';
+          ipValue.textContent = '取得できませんでした';
+          lineValue.textContent = '取得できませんでした';
+          verdictLine.className = 'verdict none';
+          verdictLine.textContent = '調べられませんでした';
+        });
+
+      var pRtc = checkWebRTC().then(function (r) {
+        if (r === 'leak') {
+          rtcValue.textContent = 'WebRTCの漏れ：あり（端末の内部IPが見えています）';
+        } else if (r === 'none') {
+          rtcValue.textContent = 'WebRTCの漏れ：なし';
+        } else {
+          rtcValue.textContent = 'WebRTCの漏れ：調べられませんでした';
+        }
+      }).catch(function () {
+        rtcValue.textContent = 'WebRTCの漏れ：調べられませんでした';
+      });
+
+      Promise.all([pInfo, pRtc]).then(function () {
+        checking = false;
+        checkBtn.disabled = false;
+        checkBtn.textContent = 'もう一度調べる';
+      });
+    });
+  }
+
+  // ---------- カード2：いまの接続を測る ----------
   var btn = document.getElementById('measureBtn');
   if (!btn) return;
 
@@ -250,12 +490,33 @@
       });
   }
 
-  function measureInfo() {
-    return fetch('https://ipapi.co/json/')
+  function measureUpload() {
+    var size = 1000000;
+    var body = new Uint8Array(size);
+    for (var i = 0; i < size; i += 4096) body[i] = i % 251;
+    var start = performance.now();
+    return fetch('https://speed.cloudflare.com/__up', { method: 'POST', body: body, cache: 'no-store' })
       .then(function (res) {
         if (!res.ok) throw new Error('bad response');
-        return res.json();
+        var sec = (performance.now() - start) / 1000;
+        if (sec <= 0) throw new Error('bad timing');
+        return (size * 8) / sec / 1000000;
       });
+  }
+
+  function gaugePct(mbps) {
+    if (!isFinite(mbps) || mbps <= 1) return 0;
+    if (mbps >= 100) return 100;
+    var pts = [[0, 0], [1, 33], [Math.log10(50), 66], [2, 100]];
+    var x = Math.log10(mbps);
+    for (var i = 1; i < pts.length; i++) {
+      if (x <= pts[i][0]) {
+        var x0 = pts[i - 1][0], y0 = pts[i - 1][1];
+        var x1 = pts[i][0], y1 = pts[i][1];
+        return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+      }
+    }
+    return 100;
   }
 
   var running = false;
@@ -269,13 +530,16 @@
     var pingFill = document.getElementById('pingFill');
     var pingWord = document.getElementById('pingWord');
     var downValue = document.getElementById('downValue');
-    var downFill = document.getElementById('downFill');
-    var downWord = document.getElementById('downWord');
-    var infoValue = document.getElementById('infoValue');
+    var upValue = document.getElementById('upValue');
+    var gaugeMarker = document.getElementById('gaugeMarker');
+    var speedWord = document.getElementById('speedWord');
 
     pingValue.textContent = '測定中…';
+    downValue.className = 'speed-num';
     downValue.textContent = '測定中…';
-    infoValue.textContent = '測定中…';
+    upValue.className = 'speed-num';
+    upValue.textContent = '測定中…';
+    speedWord.textContent = '';
 
     var pPing = measurePing().then(function (ms) {
       var rounded = Math.round(ms);
@@ -294,34 +558,38 @@
     });
 
     var pDown = measureDownload().then(function (mbps) {
-      downValue.textContent = '約 ' + mbps.toFixed(1) + ' Mbps';
-      if (mbps >= 20) {
-        setMeter(downFill, downWord, 'good', 90, '速いです');
-      } else if (mbps >= 5) {
-        setMeter(downFill, downWord, 'mid', 55, '普通です');
+      downValue.className = 'speed-num big';
+      downValue.innerHTML = mbps.toFixed(1) + ' <span class="unit">Mbps</span>';
+      var pct = gaugePct(mbps);
+      gaugeMarker.style.display = 'block';
+      gaugeMarker.style.left = Math.max(1, Math.min(99, pct)) + '%';
+      if (mbps >= 50) {
+        speedWord.className = 'r-word good';
+        speedWord.textContent = '動画も快適です';
+      } else if (mbps >= 10) {
+        speedWord.className = 'r-word good';
+        speedWord.textContent = '普通に使えます';
+      } else if (mbps >= 3) {
+        speedWord.className = 'r-word mid';
+        speedWord.textContent = '少し遅いです';
       } else {
-        setMeter(downFill, downWord, 'bad', 25, '遅めです');
+        speedWord.className = 'r-word bad';
+        speedWord.textContent = 'かなり遅いです';
       }
     }).catch(function () {
+      downValue.className = 'speed-num';
       downValue.textContent = '取得できませんでした';
-      downFill.style.width = '0%';
-      downWord.textContent = '';
     });
 
-    var pInfo = measureInfo().then(function (d) {
-      var parts = [];
-      if (d.org) parts.push(d.org);
-      var place = [];
-      if (d.city) place.push(d.city);
-      if (d.region) place.push(d.region);
-      if (place.length) parts.push(place.join('・'));
-      if (d.ip) parts.push(d.ip);
-      infoValue.textContent = parts.length ? parts.join(' ／ ') : '取得できませんでした';
+    var pUp = measureUpload().then(function (mbps) {
+      upValue.className = 'speed-num big';
+      upValue.innerHTML = mbps.toFixed(1) + ' <span class="unit">Mbps</span>';
     }).catch(function () {
-      infoValue.textContent = '取得できませんでした';
+      upValue.className = 'speed-num';
+      upValue.textContent = '取得できませんでした';
     });
 
-    Promise.all([pPing, pDown, pInfo]).then(function () {
+    Promise.all([pPing, pDown, pUp]).then(function () {
       running = false;
       btn.disabled = false;
       btn.textContent = 'もう一度測る';
